@@ -48,27 +48,27 @@ model TailorProfile {
 }
 
 model Booking {
-  id          String        @id @default(cuid())
-  customerId  String
-  tailorId    String
-  bookingDate DateTime
-  address     String
-  notes       String?
-  status      BookingStatus @default(PENDING)
-  quotationPrice Decimal? @db.Decimal(10,2)
+  id             String        @id @default(cuid())
+  customerId     String
+  tailorId       String
+  bookingDate    DateTime
+  address        String
+  notes          String?
+  status         BookingStatus @default(PENDING)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
   quotationNotes String?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  customer    User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
-  tailor      TailorProfile @relation(fields: [tailorId], references: [id], onDelete: Cascade)
+  quotationPrice Decimal?      @db.Decimal(10, 2)
+  customer       User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
+  tailor         TailorProfile @relation(fields: [tailorId], references: [id], onDelete: Cascade)
 }
 
 enum BookingStatus {
   PENDING
   ACCEPTED
-  QUOTATION_SENT
-  CONFIRMED
   REJECTED
   COMPLETED
   CANCELLED
+  QUOTATION_SENT
+  CONFIRMED
 }
