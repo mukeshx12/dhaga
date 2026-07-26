@@ -16,12 +16,12 @@ export default function BookMeasurementButton({
   function handleClick() {
     if (!session) {
       router.push(
-        `/login?callbackUrl=/tailors/${tailorId}`
+        `/login?callbackUrl=/tailors/${tailorId}/book`
       );
       return;
     }
 
-    router.push(`/book/${tailorId}`);
+    router.push(`/tailors/${tailorId}/book`);
   }
 
   return (
