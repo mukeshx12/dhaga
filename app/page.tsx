@@ -47,6 +47,7 @@ export default async function Home() {
       <SearchBar />
 
       {/* CTA Buttons */}
+      
       <div className="mx-auto mt-6 mb-14 flex max-w-6xl justify-center gap-5">
         <Link
           href="/tailors"
