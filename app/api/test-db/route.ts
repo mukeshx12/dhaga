@@ -1,9 +1,23 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  return NextResponse.json({
-    hasDatabaseUrl: !!process.env.DATABASE_URL,
-    startsWithPostgres: process.env.DATABASE_URL?.startsWith("postgresql://"),
-    nodeEnv: process.env.NODE_ENV,
-  });
+  try {
+    const count = await prisma.tailorProfile.count();
+
+    return NextResponse.json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: String(error),
+      },
+      { status: 500 }
+    );
+  }
 }
