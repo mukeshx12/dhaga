@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  address       String?
+  phone         String?
+  bookings      Booking[]      @relation("CustomerBookings")
+  tailorProfile TailorProfile?
+}
+
+model TailorService {
+  id          String        @id @default(cuid())
+  tailorId    String
+  serviceName String
+  price       Decimal       @db.Decimal(10, 2)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  tailor      TailorProfile @relation(fields: [tailorId], references: [id], onDelete: Cascade)
+}
+
+model TailorProfile {
+  id          String          @id @default(cuid())
+  userId      String          @unique
+  shopName    String
+  phone       String
+  city        String
+  address     String
+  experience  Int
+  description String?
+  isVerified  Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  bookings    Booking[]
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  services    TailorService[]
+}
+
+model Booking {
+  id          String        @id @default(cuid())
+  customerId  String
+  tailorId    String
+  bookingDate DateTime
+  address     String
+  notes       String?
+  status      BookingStatus @default(PENDING)
+  quotationPrice Decimal? @db.Decimal(10,2)
+  quotationNotes String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  customer    User          @relation("CustomerBookings", fields: [customerId], references: [id], onDelete: Cascade)
+  tailor      TailorProfile @relation(fields: [tailorId], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  PENDING
+  ACCEPTED
+  QUOTATION_SENT
+  CONFIRMED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
