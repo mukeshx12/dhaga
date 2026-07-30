@@ -87,43 +87,41 @@ export default function BecomeTailor() {
 
         {/* Right Side */}
         <div className="relative flex justify-center">
-
-          <div className="relative overflow-hidden rounded-3xl shadow-2xl">
-
+ 
+          <div className="relative overflow-hidden rounded-3xl shadow-2xl w-full max-w-[550px]">
+ 
             <Image
               src="/images/tailoring_women.png"
               alt="Become a Dhaga Tailor"
               width={550}
               height={700}
-              className="object-cover"
+              className="w-full object-cover"
             />
-
           </div>
-
+ 
           {/* Floating Card 1 */}
-          <div className="absolute left-0 top-10 rounded-2xl bg-white p-5 shadow-xl">
+          <div className="absolute left-0 top-10 hidden rounded-2xl bg-white p-5 shadow-xl lg:block">
             <p className="text-sm text-gray-500">
               Monthly Earnings
             </p>
-
+ 
             <h3 className="mt-2 text-3xl font-bold text-amber-700">
               ₹50K+
             </h3>
           </div>
-
+ 
           {/* Floating Card 2 */}
-          <div className="absolute bottom-10 right-0 rounded-2xl bg-white p-5 shadow-xl">
+          <div className="absolute bottom-10 right-0 hidden rounded-2xl bg-white p-5 shadow-xl lg:block">
             <p className="text-sm text-gray-500">
               Active Tailors
             </p>
-
+ 
             <h3 className="mt-2 text-3xl font-bold text-amber-700">
               1200+
             </h3>
           </div>
-
+ 
         </div>
-
       </div>
     </section>
   );

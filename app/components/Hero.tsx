@@ -12,12 +12,12 @@ export default function Hero() {
             Trusted Tailors Across India
           </span>
 
-          <h1 className="mt-6 text-5xl font-extrabold leading-tight text-gray-900">
+          <h1 className="mt-6 text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl">
             Find the Perfect Tailor for Every Stitch.
           </h1>
 
           <p className="mt-6 text-lg text-gray-600">
-            Compare verified ladies' tailors, upload your design,
+            Compare verified ladies&apos; tailors, upload your design,
             schedule home measurements, and track your stitching
             order from start to finish.
           </p>
@@ -26,15 +26,18 @@ export default function Hero() {
         </div>
 
         <div className="relative flex justify-center">
-  <Image
-    src="/images/tailoring_women.png"
-    alt="Professional ladies tailor stitching ethnic wear"
-    width={550}
-    height={650}
-    priority
-    className="rounded-3xl object-cover shadow-2xl"
-  />
-</div>
+          <div className="w-full max-w-[550px]">
+            <Image
+              src="/images/tailoring_women.png"
+              alt="Professional ladies tailor stitching ethnic wear"
+              width={550}
+              height={650}
+              priority
+              sizes="(max-width: 768px) 100vw, 550px"
+              className="w-full rounded-3xl object-cover shadow-2xl"
+            />
+          </div>
+        </div>
       </div>
     </section>
   );

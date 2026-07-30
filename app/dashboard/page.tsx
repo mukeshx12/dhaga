@@ -1,54 +1,215 @@
 export const dynamic = "force-dynamic";
-import DashboardSidebar from "../components/dashboard/DashboardSidebar";
+
+import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { prisma } from "@/lib/prisma";
+
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import StatsCards from "../components/dashboard/StatsCards";
 import TailorCard from "../components/dashboard/TailorCard";
 import RecentOrders from "../components/dashboard/RecentOrders";
-import { prisma } from "@/lib/prisma";
+import BookingSuccessToast from "../components/dashboard/BookingSuccessToast";
 
+type DashboardProps = {
+  searchParams: Promise<{ booking?: string }>;
+};
 
+export default async function DashboardPage({ searchParams }: DashboardProps) {
+  const session = await getServerSession(authOptions);
+  const query = await searchParams;
 
-export default async function DashboardPage() {
-  const tailors = await prisma.tailorProfile.findMany({
-  where: {
-    isVerified: true,
-  },
-  take: 6,
-  orderBy: {
-    createdAt: "desc",
-  },
-});
+  if (!session?.user) {
+    redirect("/login");
+  }
+
+  const tailorAccount = await prisma.tailorProfile.findUnique({
+    where: { userId: session.user.id },
+    select: { id: true },
+  });
+
+  if (tailorAccount) {
+    redirect("/tailor-dashboard");
+  }
+
+  const [customer, bookings, allTailors, savedTailors] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { name: true, email: true, address: true },
+    }),
+    prisma.booking.findMany({
+      where: { customerId: session.user.id },
+      select: { status: true },
+    }),
+    prisma.tailorProfile.findMany({
+      orderBy: [{ isVerified: "desc" }, { createdAt: "desc" }],
+      take: 30,
+    }),
+    prisma.savedTailor.findMany({
+      where: { userId: session.user.id },
+      include: {
+        tailor: {
+          select: { id: true, shopName: true, city: true, shopPhoto: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  if (!customer) redirect("/login");
+
+  const location = customer.address?.toLowerCase().trim() ?? "";
+  const locationWords = location.split(/[^a-z0-9]+/).filter((word) => word.length > 2);
+  const tailors = allTailors
+    .map((tailor) => {
+      const place = `${tailor.city} ${tailor.address}`.toLowerCase();
+      const locationScore = locationWords.reduce(
+        (score, word) => score + (place.includes(word) ? 1 : 0),
+        0
+      );
+      return { tailor, locationScore };
+    })
+    .sort((a, b) => b.locationScore - a.locationScore || Number(b.tailor.isVerified) - Number(a.tailor.isVerified))
+    .slice(0, 6)
+    .map(({ tailor }) => tailor);
+
+  const deliveredCount = bookings.filter((booking) => booking.status === "COMPLETED").length;
+  const activeStatuses = new Set(["PENDING", "ACCEPTED", "QUOTATION_SENT", "CONFIRMED"]);
+  const activeCount = bookings.filter((booking) => activeStatuses.has(booking.status)).length;
+  const customerName = customer.name?.trim() || "Customer";
+
   return (
-    <main className="flex min-h-screen bg-gray-100">
-      <DashboardSidebar />
+    <main className="min-h-screen bg-[#f7f4ef]">
+        <div className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+          <DashboardHeader name={customerName} email={customer.email} />
 
-      <section className="flex-1 p-8">
-        <DashboardHeader />
+          {query.booking === "success" && (
+            <BookingSuccessToast />
+          )}
 
-        <StatsCards />
+          {/* Welcome section */}
+          <section className="mt-6 overflow-hidden rounded-3xl bg-gradient-to-r from-amber-800 via-amber-700 to-orange-600 px-5 py-8 text-white shadow-lg sm:px-8 sm:py-10">
+            <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
+              <div className="max-w-2xl">
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-amber-100">
+                  Customer Dashboard
+                </p>
 
-        <div className="mt-10">
-          <h2 className="mb-6 text-2xl font-bold text-gray-900">
-            Recommended Tailors
-          </h2>
+                <h1 className="mt-3 text-3xl font-bold sm:text-4xl">
+                  Welcome back, {session.user.name || "Customer"} 👋
+                </h1>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {tailors.map((tailor) => (
-  <TailorCard
-    key={tailor.id}
-    id={tailor.id}
-    shopName={tailor.shopName}
-    city={tailor.city}
-    experience={tailor.experience}
-    description={tailor.description}
-    isVerified={tailor.isVerified}
-  />
-))}
+                <p className="mt-3 max-w-xl text-sm leading-6 text-amber-50 sm:text-base">
+                  Discover trusted tailors, book tailoring services and manage
+                  all your bookings from one place.
+                </p>
+              </div>
+
+              <div>
+                <Link
+                  href="/tailors"
+                  className="rounded-xl bg-white px-6 py-3 text-center text-sm font-semibold text-amber-800 transition hover:bg-amber-50"
+                >
+                  Explore Tailors
+                </Link>
+              </div>
+            </div>
+          </section>
+
+          <div className="mt-8">
+            <StatsCards
+              bookingCount={bookings.length}
+              deliveredCount={deliveredCount}
+              activeCount={activeCount}
+              savedCount={savedTailors.length}
+            />
           </div>
-        </div>
 
-        <RecentOrders />
-      </section>
+          {/* Recent bookings */}
+          <section id="recent-bookings" className="mt-10 scroll-mt-6 overflow-hidden rounded-3xl bg-white p-4 shadow-sm sm:p-6">
+            <div className="mb-5">
+              <p className="text-sm font-semibold text-amber-700">
+                Your activity
+              </p>
+
+              <h2 className="mt-1 text-2xl font-bold text-gray-900">
+                Recent Bookings
+              </h2>
+            </div>
+
+            <RecentOrders />
+          </section>
+
+          {/* Recommended tailors */}
+          <section className="mt-12">
+            <div className="mb-6">
+              <div>
+                <p className="text-sm font-semibold text-amber-700">
+                  Near you
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">
+                  Recommended Tailors
+                </h2>
+
+                <p className="mt-2 text-sm text-gray-600">
+                  {customer.address
+                    ? `Prioritized using your saved address: ${customer.address}`
+                    : "Add your address in your profile to receive location-based recommendations."}
+                </p>
+              </div>
+            </div>
+
+            {tailors.length > 0 ? (
+              <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {tailors.map((tailor) => (
+                  <TailorCard
+                    key={tailor.id}
+                    id={tailor.id}
+                    shopName={tailor.shopName}
+                    city={tailor.city}
+                    experience={tailor.experience}
+                    description={tailor.description}
+                    isVerified={tailor.isVerified}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-12 text-center shadow-sm">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  No tailors available
+                </h3>
+
+                <p className="mt-2 text-sm text-gray-600">
+                  Tailors will appear here once they are available.
+                </p>
+              </div>
+            )}
+          </section>
+
+          <section id="saved-tailors" className="mt-12 scroll-mt-6">
+            <p className="text-sm font-semibold text-amber-700">Your favourites</p>
+            <h2 className="mt-1 text-2xl font-bold text-gray-900">Saved Tailors</h2>
+
+            {savedTailors.length === 0 ? (
+              <div className="mt-5 rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center text-gray-600">
+                Save a tailor from their profile to find them here quickly.
+              </div>
+            ) : (
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {savedTailors.map(({ tailor }) => (
+                  <Link key={tailor.id} href={`/tailors/${tailor.id}`} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-amber-300 hover:shadow-md">
+                    <p className="font-bold text-gray-900">{tailor.shopName}</p>
+                    <p className="mt-1 text-sm text-gray-500">{tailor.city}</p>
+                    <p className="mt-4 text-sm font-semibold text-amber-700">Open tailor profile →</p>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
     </main>
   );
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
+import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -37,6 +37,8 @@ export async function GET() {
     id: user.id,
     name: user.name,
     email: user.email,
+    accountRole: user.role,
+    accountStatus: user.accountStatus,
     role: tailorProfile ? "Tailor" : "Customer",
     isTailor: !!tailorProfile,
     tailorId: tailorProfile?.id ?? null,

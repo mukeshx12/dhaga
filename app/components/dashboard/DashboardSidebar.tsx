@@ -42,7 +42,7 @@ const menuItems = [
 
 export default function DashboardSidebar() {
   return (
-    <aside className="w-72 min-h-screen bg-[#1D4D4F] text-white flex flex-col">
+    <aside className="w-full bg-[#1D4D4F] text-white flex flex-col lg:w-72 lg:min-h-screen">
       <div className="p-8 border-b border-white/10">
         <div className="flex items-center gap-3">
           <Scissors size={30} />

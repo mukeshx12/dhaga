@@ -48,17 +48,17 @@ export default async function Home() {
 
       {/* CTA Buttons */}
       
-      <div className="mx-auto mt-6 mb-14 flex max-w-6xl justify-center gap-5">
+      <div className="mx-auto mt-6 mb-14 flex max-w-6xl flex-col items-center gap-5 sm:flex-row sm:justify-center">
         <Link
           href="/tailors"
-          className="rounded-xl bg-amber-700 px-10 py-4 text-lg font-semibold text-white transition hover:bg-amber-800"
+          className="w-full rounded-xl bg-amber-700 px-10 py-4 text-center text-lg font-semibold text-white transition hover:bg-amber-800 sm:w-auto"
         >
           Book Measurement
         </Link>
-
+ 
         <Link
           href="/tailors"
-          className="rounded-xl border-2 border-amber-700 bg-white px-10 py-4 text-lg font-semibold text-amber-700 transition hover:bg-amber-700 hover:text-white"
+          className="w-full rounded-xl border-2 border-amber-700 bg-white px-10 py-4 text-center text-lg font-semibold text-amber-700 transition hover:bg-amber-700 hover:text-white sm:w-auto"
         >
           Browse Tailors
         </Link>

@@ -9,14 +9,22 @@ datasource db {
 
 model User {
   id            String         @id @default(cuid())
-  name          String
-  email         String         @unique
-  password      String
+
+  name          String?
+  email         String?        @unique
+  phone         String?        @unique
+
+  password      String?
+
+  address       String?
+  role          UserRole       @default(CUSTOMER)
+  accountStatus AccountStatus  @default(ACTIVE)
+
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
-  address       String?
-  phone         String?
+
   bookings      Booking[]      @relation("CustomerBookings")
+  savedTailors  SavedTailor[]
   tailorProfile TailorProfile?
 }
 
@@ -39,12 +47,28 @@ model TailorProfile {
   address     String
   experience  Int
   description String?
+  shopPhoto    String?         @db.Text
+  workPhotos   String[]        @default([])
   isVerified  Boolean         @default(false)
+  status      TailorStatus    @default(PENDING)
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
   bookings    Booking[]
   user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   services    TailorService[]
+  savedBy     SavedTailor[]
+}
+
+model SavedTailor {
+  id        String        @id @default(cuid())
+  userId    String
+  tailorId  String
+  createdAt DateTime      @default(now())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tailor    TailorProfile @relation(fields: [tailorId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tailorId])
+  @@index([userId])
 }
 
 model Booking {
@@ -66,9 +90,27 @@ model Booking {
 enum BookingStatus {
   PENDING
   ACCEPTED
+  IN_PROGRESS
   REJECTED
   COMPLETED
   CANCELLED
   QUOTATION_SENT
   CONFIRMED
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum TailorStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+  SUSPENDED
 }

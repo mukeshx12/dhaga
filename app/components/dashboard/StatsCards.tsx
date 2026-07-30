@@ -1,68 +1,35 @@
-"use client";
+import Link from "next/link";
+import { CalendarDays, CircleCheckBig, Heart, PackageCheck } from "lucide-react";
 
-import {
-  Package,
-  CalendarDays,
-  Heart,
-  Star,
-} from "lucide-react";
+type Props = {
+  bookingCount: number;
+  deliveredCount: number;
+  activeCount: number;
+  savedCount: number;
+};
 
-const stats = [
-  {
-    title: "Orders",
-    value: "12",
-    icon: Package,
-    color: "bg-blue-100 text-blue-600",
-  },
-  {
-    title: "Bookings",
-    value: "4",
-    icon: CalendarDays,
-    color: "bg-green-100 text-green-600",
-  },
-  {
-    title: "Saved Tailors",
-    value: "8",
-    icon: Heart,
-    color: "bg-pink-100 text-pink-600",
-  },
-  {
-    title: "Reviews",
-    value: "6",
-    icon: Star,
-    color: "bg-yellow-100 text-yellow-600",
-  },
-];
+export default function StatsCards({ bookingCount, deliveredCount, activeCount, savedCount }: Props) {
+  const stats = [
+    { title: "Bookings", value: bookingCount, icon: CalendarDays, color: "bg-blue-100 text-blue-700", href: "#recent-bookings" },
+    { title: "Delivered orders", value: deliveredCount, icon: PackageCheck, color: "bg-green-100 text-green-700", href: "#recent-bookings" },
+    { title: "Active orders", value: activeCount, icon: CircleCheckBig, color: "bg-amber-100 text-amber-700", href: "#recent-bookings" },
+    { title: "Saved tailors", value: savedCount, icon: Heart, color: "bg-pink-100 text-pink-700", href: "#saved-tailors" },
+  ];
 
-export default function StatsCards() {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => {
         const Icon = stat.icon;
-
         return (
-          <div
-            key={stat.title}
-            className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-lg"
-          >
+          <Link key={stat.title} href={stat.href} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500 text-sm">
-                  {stat.title}
-                </p>
-
-                <h2 className="mt-2 text-3xl font-bold text-gray-900">
-                  {stat.value}
-                </h2>
+                <p className="text-sm text-gray-500">{stat.title}</p>
+                <p className="mt-2 text-3xl font-bold text-gray-900">{stat.value}</p>
               </div>
-
-              <div
-                className={`flex h-14 w-14 items-center justify-center rounded-xl ${stat.color}`}
-              >
-                <Icon size={28} />
-              </div>
+              <span className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.color}`}><Icon size={24} /></span>
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>

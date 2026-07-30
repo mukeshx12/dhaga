@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
+import { authOptions } from "@/lib/auth/authOptions";
 
 export async function GET() {
   try {
@@ -24,6 +24,7 @@ console.log("Session User Email:", session.user.email);
   include: {
     tailor: {
       select: {
+        id: true,
         shopName: true,
         city: true,
       },
@@ -65,6 +66,18 @@ if (!session?.user?.id) {
   );
 }
 
+    const customerIsTailor = await prisma.tailorProfile.findUnique({
+      where: { userId: session.user.id },
+      select: { id: true },
+    });
+
+    if (customerIsTailor) {
+      return NextResponse.json(
+        { message: "Tailor accounts cannot book other tailors." },
+        { status: 403 }
+      );
+    }
+
     const {
       tailorId,
       bookingDate,
@@ -92,21 +105,21 @@ if (!session?.user?.id) {
       notes,
     });
 
-    const existingBooking = await prisma.booking.findFirst({
+    const activeBookingCount = await prisma.booking.count({
   where: {
     customerId: session.user.id,
     tailorId,
     status: {
-      in: ["PENDING", "ACCEPTED"],
+      in: ["PENDING", "ACCEPTED", "QUOTATION_SENT", "CONFIRMED"],
     },
   },
 });
 
-if (existingBooking) {
+if (activeBookingCount >= 3) {
   return NextResponse.json(
     {
       message:
-        "You already have an active booking with this tailor.",
+        "You already have 3 active bookings with this tailor. Complete or cancel one before booking again.",
     },
     {
       status: 400,

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Scissors } from "lucide-react";
+import { Menu, Scissors, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 
@@ -17,8 +17,7 @@ type UserData = {
 
 export default function Navbar() {
   const { data: session } = useSession();
-
-console.log("Session:", session);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [user, setUser] = useState<UserData | null>(null);
 
@@ -51,13 +50,17 @@ console.log("Session:", session);
 
         {/* Navigation */}
         <div className="hidden md:flex items-center gap-8 font-medium text-gray-700">
-          <Link href="/services" className="hover:text-amber-700">
-            Services
-          </Link>
+          {!user?.isTailor && (
+            <>
+              <Link href="/#popular-services" className="hover:text-amber-700">
+                Services
+              </Link>
 
-          <Link href="/tailors" className="hover:text-amber-700">
-            Tailors
-          </Link>
+              <Link href="/tailors" className="hover:text-amber-700">
+                Tailors
+              </Link>
+            </>
+          )}
 
           <Link href="/#how-it-works"
             className="text-gray-700 transition hover:text-amber-700">
@@ -71,68 +74,157 @@ console.log("Session:", session);
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
-  {!session ? (
-    <>
-      <Link
-        href="/login"
-        className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
-      >
-        Login
-      </Link>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            aria-label="Toggle menu"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition hover:bg-gray-100 md:hidden"
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
 
-      <Link
-        href="/register"
-        className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
-      >
-        Sign Up
-      </Link>
-    </>
-  ) : (
-  <>
-    {user?.isTailor ? (
-      <>
-        <Link
-          href="/tailor-dashboard"
-          className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
-        >
-          Tailor Dashboard
-        </Link>
+          <div className="hidden md:flex items-center gap-3">
+            {!session ? (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
+                >
+                  Login
+                </Link>
 
-        <Link
-          href="/my-profile"
-          className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
-        >
-          My Profile
-        </Link>
-      </>
-    ) : (
-      <>
-        <Link
-          href="/dashboard"
-          className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
-        >
-          Dashboard
-        </Link>
+                <Link
+                  href="/register"
+                  className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <>
+                {user?.isTailor ? (
+                  <>
+                    <Link
+                      href="/tailor-dashboard"
+                      className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
+                    >
+                      Tailor Dashboard
+                    </Link>
 
-        <Link
-          href="/become-tailor"
-          className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
-        >
-          Become a Tailor
-        </Link>
-      </>
-    )}
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
+                    >
+                      Dashboard
+                    </Link>
 
-    <button
-      onClick={() => signOut({ callbackUrl: "/" })}
-      className="rounded-lg border border-red-500 px-5 py-2 text-red-600 hover:bg-red-50"
-    >
-      Logout
-    </button>
-  </>
-)}
-</div>
+                    <Link
+                      href="/become-tailor"
+                      className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
+                    >
+                      Become a Tailor
+                    </Link>
+                  </>
+                )}
+
+                <button
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="rounded-lg border border-red-500 px-5 py-2 text-red-600 hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
+        </div>
       </div>
+
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-gray-200 bg-[#FAF7F2] px-6 py-5 shadow-lg">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-3 border-b border-gray-100 pb-4">
+              {!user?.isTailor && (
+                <>
+                  <Link href="/#popular-services" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
+                    Services
+                  </Link>
+                  <Link href="/tailors" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
+                    Tailors
+                  </Link>
+                </>
+              )}
+              <Link href="/#how-it-works" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
+                How It Works
+              </Link>
+              <Link href="/#contact" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
+                Contact
+              </Link>
+            </div>
+
+            {!session ? (
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="/login"
+                  className="rounded-lg border border-amber-700 px-5 py-3 text-center text-amber-700 hover:bg-amber-50"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Sign Up
+                </Link>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {user?.isTailor ? (
+                  <>
+                    <Link
+                      href="/tailor-dashboard"
+                      className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Tailor Dashboard
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/become-tailor"
+                      className="rounded-lg border border-amber-700 px-5 py-3 text-center text-amber-700 hover:bg-amber-50"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Become a Tailor
+                    </Link>
+                  </>
+                )}
+                <button
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="rounded-lg border border-red-500 px-5 py-3 text-center text-red-600 hover:bg-red-50"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

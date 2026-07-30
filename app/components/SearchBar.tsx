@@ -60,7 +60,7 @@ export default function SearchBar() {
                   }`
                 );
               }}
-              className="rounded-xl bg-amber-700 px-10 py-4 text-white transition hover:bg-amber-800"
+              className="rounded-xl bg-amber-700 px-10 py-4 text-white transition hover:bg-amber-800 w-full lg:w-auto"
             >
               Search
             </button>

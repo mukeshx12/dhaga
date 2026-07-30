@@ -12,6 +12,7 @@ export const authOptions: NextAuthOptions = {
 
   providers: [
     CredentialsProvider({
+      id: "credentials",
       name: "Credentials",
 
       credentials: {
@@ -33,26 +34,24 @@ export const authOptions: NextAuthOptions = {
 
         const email = credentials.email.toLowerCase().trim();
 
-        console.log("Login email:", email);
-
         const user = await prisma.user.findUnique({
           where: {
             email,
           },
         });
 
-        console.log("User found:", user);
-
-        if (!user) {
+        if (!user || !user.password) {
           throw new Error("Invalid email or password");
+        }
+
+        if (user.accountStatus === "SUSPENDED") {
+          throw new Error("This account has been suspended");
         }
 
         const passwordMatch = await compare(
           credentials.password,
           user.password
         );
-
-        console.log("Password match:", passwordMatch);
 
         if (!passwordMatch) {
           throw new Error("Invalid email or password");

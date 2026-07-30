@@ -48,14 +48,14 @@ const services = [
 ];
 export default function Services() {
   return (
-    <section className="bg-white py-20">
+    <section id="popular-services" className="scroll-mt-20 bg-white py-20">
       <div className="mx-auto max-w-7xl px-6">
         <h2 className="text-center text-4xl font-bold text-gray-900">
           Popular Services
         </h2>
 
         <p className="mt-4 text-center text-gray-600">
-          Everything you need for women's tailoring in one place.
+          Everything you need for women&apos;s tailoring in one place.
         </p>
 
         <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

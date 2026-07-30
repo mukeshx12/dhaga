@@ -1,10 +1,40 @@
-import TailorBookings from "@/app/tailor-dashboard/components/TailorBookings";
-import TailorServices from "@/app/components/dashboard/TailorServices";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth/authOptions";
+import { prisma } from "@/lib/prisma";
+import TailorDashboardTabs from "@/app/tailor-dashboard/components/TailorDashboardTabs";
 
-export default function TailorDashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function TailorDashboardPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    redirect("/login");
+  }
+
+  const listing = await prisma.tailorProfile.findUnique({
+    where: { userId: session.user.id },
+    select: {
+      shopName: true,
+      phone: true,
+      city: true,
+      address: true,
+      experience: true,
+      description: true,
+      shopPhoto: true,
+      workPhotos: true,
+      isVerified: true,
+    },
+  });
+
+  if (!listing) {
+    redirect("/become-tailor");
+  }
+
   return (
-    <main className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl p-10">
+    <main className="min-h-screen bg-[#f7f4ef]">
+      <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
 
         <h1 className="font-semibold text-black text-4xl">
           Welcome Back 👋
@@ -14,8 +44,7 @@ export default function TailorDashboardPage() {
           Manage your tailoring business and customer bookings.
         </p>
 
-        <TailorBookings />
-        <TailorServices />
+        <TailorDashboardTabs initialListing={listing} />
 
       </div>
     </main>

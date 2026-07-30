@@ -11,8 +11,9 @@ type Booking = {
   quotationPrice?: string | null;
   quotationNotes?: string | null;
   customer: {
-  name: string;
-  email: string;
+    name: string | null;
+    email: string | null;
+    phone: string | null;
   };
 };
 
@@ -48,18 +49,12 @@ const [quotationNotes, setQuotationNotes] = useState("");
       return;
     }
 
-    // Update UI instantly
     setBookings((prev) =>
       prev.map((booking) =>
-     booking.id === bookingId
-      ? {
-          ...booking,
-          quotationPrice,
-          quotationNotes,
-          status: "QUOTATION_SENT",
-        }
-      : booking
-  )
+        booking.id === bookingId
+          ? { ...booking, status }
+          : booking
+      )
     );
 
   } catch (error) {
@@ -101,6 +96,7 @@ async function sendQuotation(
               ...booking,
               quotationPrice,
               quotationNotes,
+              status: "QUOTATION_SENT",
             }
           : booking
       )
@@ -159,7 +155,20 @@ async function sendQuotation(
 
   return (
 
-    <div className="mt-10 grid gap-6">
+    <section className="mt-12">
+      <div>
+        <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">
+          Customer requests
+        </p>
+        <h2 className="mt-1 text-2xl font-bold text-gray-900">
+          Who booked you
+        </h2>
+        <p className="mt-2 text-sm text-gray-600">
+          Review customer details, measurement visits and quotation status.
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-6">
 
       {bookings.map((booking) => (
 
@@ -173,12 +182,16 @@ async function sendQuotation(
             <div>
 
               <h2 className="text-xl font-semibold">
-                {booking.customer.name}
+                {booking.customer.name || "Customer"}
               </h2>
 
               <p className="text-gray-500">
-                {booking.customer.email}
+                {booking.customer.email || "No email provided"}
               </p>
+
+              {booking.customer.phone && (
+                <p className="text-gray-500">{booking.customer.phone}</p>
+              )}
 
             </div>
 
@@ -318,7 +331,8 @@ async function sendQuotation(
 
       ))}
 
-    </div>
+      </div>
+    </section>
 
   );
 }
