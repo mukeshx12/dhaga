@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CalendarCheck, Search } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 import Navbar from "./components/Navbar";
@@ -48,18 +49,20 @@ export default async function Home() {
 
       {/* CTA Buttons */}
       
-      <div className="mx-auto mt-6 mb-14 flex max-w-6xl flex-col items-center gap-5 sm:flex-row sm:justify-center">
+      <div className="mx-auto mb-14 mt-6 flex max-w-xl flex-col gap-3 px-5 sm:max-w-none sm:flex-row sm:justify-center sm:px-6">
         <Link
           href="/tailors"
-          className="w-full rounded-xl bg-amber-700 px-10 py-4 text-center text-lg font-semibold text-white transition hover:bg-amber-800 sm:w-auto"
+          className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-6 py-3.5 text-center text-base font-semibold text-white shadow-sm transition hover:bg-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56 sm:text-lg"
         >
+          <CalendarCheck aria-hidden="true" size={21} />
           Book Measurement
         </Link>
  
         <Link
           href="/tailors"
-          className="w-full rounded-xl border-2 border-amber-700 bg-white px-10 py-4 text-center text-lg font-semibold text-amber-700 transition hover:bg-amber-700 hover:text-white sm:w-auto"
+          className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-700 bg-white px-6 py-3.5 text-center text-base font-semibold text-amber-700 transition hover:bg-amber-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56 sm:text-lg"
         >
+          <Search aria-hidden="true" size={21} />
           Browse Tailors
         </Link>
       </div>
