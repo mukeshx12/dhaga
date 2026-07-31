@@ -88,12 +88,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("en");
 
   useEffect(() => {
-    const savedLanguage = window.localStorage.getItem("dhaga-language");
-    if (savedLanguage === "en" || savedLanguage === "hi") {
-      // The persisted preference is available only after the client hydrates.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setLanguageState(savedLanguage);
-      document.documentElement.lang = savedLanguage;
+    try {
+      const savedLanguage = window.localStorage.getItem("dhaga-language");
+      if (savedLanguage === "en" || savedLanguage === "hi") {
+        // The persisted preference is available only after the client hydrates.
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setLanguageState(savedLanguage);
+        document.documentElement.lang = savedLanguage;
+      }
+    } catch {
+      // Some mobile/private browsers block storage. The app should still load.
+      document.documentElement.lang = "en";
     }
   }, []);
 
@@ -101,8 +106,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     language,
     setLanguage(nextLanguage) {
       setLanguageState(nextLanguage);
-      window.localStorage.setItem("dhaga-language", nextLanguage);
       document.documentElement.lang = nextLanguage;
+      try {
+        window.localStorage.setItem("dhaga-language", nextLanguage);
+      } catch {
+        // Keep the in-memory language active when persistence is unavailable.
+      }
     },
     t(key) {
       return messages[language][key];
