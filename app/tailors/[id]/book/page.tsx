@@ -12,19 +12,13 @@ type Props = {
 export default async function BookMeasurementPage({ params }: Props) {
   const { id } = await params;
   const tailor = await prisma.tailorProfile.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      user: true,
-    },
+    where: { id },
+    select: { id: true, shopName: true },
   });
 
   if (!tailor) {
     notFound();
   }
-  console.log("Current Tailor:", tailor.id, tailor.shopName);
-
   return (
     <main className="min-h-screen bg-[#FAF7F2] px-6 py-12">
       <div className="mx-auto max-w-3xl rounded-3xl bg-white p-10 shadow-lg">
@@ -39,7 +33,7 @@ export default async function BookMeasurementPage({ params }: Props) {
             {tailor.shopName}
           </span>
         </p>
-        <BookingForm tailorId={tailor.id} />
+        <BookingForm tailorId={tailor.id} tailorName={tailor.shopName} />
 
       </div>
     </main>
