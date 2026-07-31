@@ -1,15 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import {
-  LoaderCircle,
-  MapPin,
-  Search,
-  ShieldCheck,
-  SlidersHorizontal,
-  X,
-} from "lucide-react";
 import TailorCard from "@/app/components/TailorCard";
 
 type Tailor = {
@@ -19,179 +11,142 @@ type Tailor = {
   description: string | null;
   experience: number;
   isVerified: boolean;
-  shopPhoto: string | null;
-  services: Array<{
-    id: string;
-    serviceName: string;
-    price: number;
-  }>;
 };
 
-type Props = { initialTailors: Tailor[] };
+type Props = {
+  initialTailors: Tailor[];
+};
 
-export default function TailorsClient({ initialTailors }: Props) {
-  const searchParams = useSearchParams();
+export default function TailorsClient({
+  initialTailors,
+}: Props) {
   const [tailors, setTailors] = useState(initialTailors);
-  const [search, setSearch] = useState("");
-  const [city, setCity] = useState(searchParams.get("city") || "");
-  const [service, setService] = useState(searchParams.get("service") || "");
-  const [sort, setSort] = useState("newest");
-  const [verifiedOnly, setVerifiedOnly] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+const searchParams = useSearchParams();
 
-  useEffect(() => {
-    const controller = new AbortController();
-    const timer = window.setTimeout(async () => {
-      setLoading(true);
-      setError("");
+const [search, setSearch] = useState("");
 
-      const query = new URLSearchParams({
-        search: search.trim(),
-        city: city.trim(),
-        service: service.trim(),
-        sort,
-        verified: String(verifiedOnly),
-      });
+const [city, setCity] = useState(
+  searchParams.get("city") || ""
+);
+const [sort, setSort] = useState("newest");
+const [service, setService] = useState(searchParams.get("service") ?? "");
+const [verifiedOnly, setVerifiedOnly] = useState(false);
+useEffect(() => {
+  async function fetchTailors() {
+    const url = `/api/tailors?search=${encodeURIComponent(search)}
+&city=${encodeURIComponent(city)}
+&service=${encodeURIComponent(service)}
+&sort=${sort}
+&verified=${verifiedOnly}`;
 
-      try {
-        const response = await fetch(`/api/tailors?${query}`, {
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error("Unable to load tailors");
-        const data: unknown = await response.json();
-        setTailors(Array.isArray(data) ? data : []);
-      } catch (fetchError) {
-        if (fetchError instanceof DOMException && fetchError.name === "AbortError") return;
-        setError("We could not load tailors right now. Please try again.");
-      } finally {
-        if (!controller.signal.aborted) setLoading(false);
-      }
-    }, 300);
 
-    return () => {
-      window.clearTimeout(timer);
-      controller.abort();
-    };
-  }, [search, city, service, sort, verifiedOnly]);
+   const response = await fetch(
+  `/api/tailors?search=${encodeURIComponent(search.trim())}&city=${encodeURIComponent(city.trim())}&service=${encodeURIComponent(service.trim())}&sort=${sort}&verified=${verifiedOnly}`
+);
 
-  const hasFilters = Boolean(search || city || service || verifiedOnly || sort !== "newest");
-  const clearFilters = () => {
-    setSearch("");
-    setCity("");
-    setService("");
-    setSort("newest");
-    setVerifiedOnly(false);
-  };
+const data = await response.json();
+
+  console.log("API Response:", data);
+
+  if (Array.isArray(data)) {
+    setTailors(data);
+  } else {
+    console.error("API Error:", data);
+    setTailors([]);
+  }
+
+  }
+
+  fetchTailors();
+}, [search,city,sort,verifiedOnly,service]);
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#FAF7F2] px-3 pb-12 pt-4 sm:px-6 sm:pb-16 sm:pt-8">
+    <main className="min-h-screen bg-[#FAF7F2] px-6 py-12">
+
       <div className="mx-auto max-w-7xl">
-        <section className="overflow-hidden rounded-2xl bg-gradient-to-br from-amber-900 via-amber-800 to-orange-700 px-5 pb-12 pt-7 text-white shadow-xl sm:rounded-3xl sm:px-10 sm:py-14 lg:px-14">
-          <span className="inline-flex rounded-full bg-white/15 px-3 py-1.5 text-xs font-semibold ring-1 ring-white/25 sm:px-4 sm:py-2 sm:text-sm">
-            Trusted local professionals
-          </span>
-          <h1 className="mt-4 max-w-3xl text-[1.75rem] font-bold leading-tight tracking-tight sm:mt-5 sm:text-5xl lg:text-6xl">
-            Find the right tailor for your perfect fit
-          </h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-amber-50 sm:mt-4 sm:text-lg sm:leading-7">
-            Compare local tailors, services and prices, then book a measurement at your convenience.
-          </p>
-        </section>
 
-        <section className="relative z-10 mx-2 mt-4 max-w-6xl rounded-2xl border border-amber-100 bg-white p-3.5 shadow-lg sm:mx-auto sm:mt-6 sm:p-6">
-          <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-700 sm:mb-4">
-            <SlidersHorizontal size={18} className="text-amber-700" />
-            Search and filters
-          </div>
+  {/* Heading */}
+  <div className="text-center">
+    <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
+      Browse Tailors
+    </span>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <label className="relative sm:col-span-2 lg:col-span-1">
-              <span className="sr-only">Search shop name</span>
-              <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={19} />
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search shop name"
-                className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-500 focus:border-amber-600 focus:bg-white focus:ring-2 focus:ring-amber-100 sm:h-12 sm:text-base"
-              />
-            </label>
+    <h1 className="mt-5 text-5xl font-bold text-gray-900">
+      Find Your Perfect Tailor
+    </h1>
 
-            <label className="relative">
-              <span className="sr-only">City</span>
-              <MapPin className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={19} />
-              <input
-                value={city}
-                onChange={(event) => setCity(event.target.value)}
-                placeholder="City or area"
-                className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 pl-11 pr-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-500 focus:border-amber-600 focus:bg-white focus:ring-2 focus:ring-amber-100 sm:h-12 sm:text-base"
-              />
-            </label>
+    <p className="mt-4 text-lg text-gray-700">
+      Browse verified tailoring professionals near you.
+    </p>
+  </div>
 
-            <input
-              value={service}
-              onChange={(event) => setService(event.target.value)}
-              placeholder="Service, e.g. blouse"
-              className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm text-gray-900 outline-none transition placeholder:text-gray-500 focus:border-amber-600 focus:bg-white focus:ring-2 focus:ring-amber-100 sm:h-12 sm:text-base"
-            />
+  {/* Verified Checkbox */}
+  <div className="mt-8 flex items-center gap-3">
+    <input
+      id="verified"
+      type="checkbox"
+      checked={verifiedOnly}
+      onChange={(e) => setVerifiedOnly(e.target.checked)}
+      className="h-5 w-5 rounded border-gray-300 text-amber-700 focus:ring-amber-600"
+    />
 
-            <select
-              value={sort}
-              onChange={(event) => setSort(event.target.value)}
-              aria-label="Sort tailors"
-              className="h-11 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 text-sm text-gray-900 outline-none transition focus:border-amber-600 focus:bg-white focus:ring-2 focus:ring-amber-100 sm:h-12 sm:text-base"
-            >
-              <option value="newest">Newest first</option>
-              <option value="experience_desc">Most experienced</option>
-              <option value="experience_asc">Experience: low to high</option>
-              <option value="name">Shop name: A–Z</option>
-            </select>
-          </div>
+    <label
+      htmlFor="verified"
+      className="cursor-pointer text-base font-semibold text-gray-800"
+    >
+      Verified Tailors Only
+    </label>
+  </div>
 
-          <div className="mt-3 flex flex-col gap-3 border-t border-gray-100 pt-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between sm:pt-4">
-            <label className="flex cursor-pointer items-center gap-3 text-sm font-semibold text-gray-700">
-              <input
-                type="checkbox"
-                checked={verifiedOnly}
-                onChange={(event) => setVerifiedOnly(event.target.checked)}
-                className="h-5 w-5 rounded border-gray-300 text-amber-700 focus:ring-amber-600"
-              />
-              <ShieldCheck size={19} className="text-amber-700" />
-              Verified tailors only
-            </label>
-            {hasFilters && (
-              <button onClick={clearFilters} className="inline-flex items-center gap-1.5 self-start text-sm font-semibold text-amber-800 hover:text-amber-950 sm:self-auto">
-                <X size={17} /> Clear filters
-              </button>
-            )}
-          </div>
-        </section>
+  {/* Search & Filters */}
+  <div className="mx-auto mt-10 flex max-w-5xl gap-4">
 
-        <div className="mt-8 flex items-end justify-between gap-4 sm:mt-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 sm:text-sm">Available tailors</p>
-            <h2 className="mt-1 text-xl font-bold text-gray-950 sm:text-3xl">
-              {loading ? "Finding matches…" : `${tailors.length} ${tailors.length === 1 ? "tailor" : "tailors"} found`}
-            </h2>
-          </div>
-          {loading && <LoaderCircle className="animate-spin text-amber-700" aria-label="Loading tailors" />}
-        </div>
+    <input
+      type="text"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="Search by shop name..."
+      className="flex-1 rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-500 outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
+    />
 
-        {error ? (
-          <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-8 text-center font-medium text-red-700">{error}</div>
-        ) : tailors.length > 0 ? (
-          <div className={`mt-7 grid gap-6 md:grid-cols-2 xl:grid-cols-3 ${loading ? "opacity-60" : "opacity-100"} transition-opacity`}>
-            {tailors.map((tailor) => <TailorCard key={tailor.id} tailor={tailor} />)}
-          </div>
-        ) : !loading ? (
-          <div className="mt-8 rounded-3xl border border-amber-100 bg-white px-6 py-14 text-center shadow-sm">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-800"><Search size={25} /></div>
-            <h2 className="mt-5 text-2xl font-bold text-gray-950">No matching tailors found</h2>
-            <p className="mx-auto mt-2 max-w-md text-gray-600">Try a nearby city, a different service, or clear your filters to see all available tailors.</p>
-            {hasFilters && <button onClick={clearFilters} className="mt-6 rounded-xl bg-amber-700 px-5 py-3 font-semibold text-white transition hover:bg-amber-800">Show all tailors</button>}
-          </div>
-        ) : null}
-      </div>
+    <select
+      value={city}
+      onChange={(e) => setCity(e.target.value)}
+      className="rounded-xl border border-gray-300 bg-white px-5 text-gray-900 outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
+    >
+      <option value="">All Cities</option>
+<option value="Delhi">Delhi</option>
+<option value="New Delhi">New Delhi</option>
+<option value="Noida">Noida</option>
+<option value="Lucknow">Lucknow</option>
+<option value="Pune">Pune</option>
+<option value="Raipur">Raipur</option>
+    </select>
+
+    <select
+      value={sort}
+      onChange={(e) => setSort(e.target.value)}
+      className="rounded-xl border border-gray-300 bg-white px-5 text-gray-900 outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
+    >
+      <option value="newest">Newest</option>
+      <option value="experience">Experience</option>
+      <option value="name">A-Z</option>
+    </select>
+
+  </div>
+
+  {/* Tailor Cards */}
+  <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    {tailors.map((tailor) => (
+      <TailorCard
+        key={tailor.id}
+        tailor={tailor}
+      />
+    ))}
+  </div>
+
+</div>
+
     </main>
   );
 }

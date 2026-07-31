@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type BookingFormProps = {
   tailorId: string;
@@ -18,6 +19,7 @@ export default function BookingForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleSubmit = async (
   e: React.FormEvent<HTMLFormElement>
@@ -49,7 +51,7 @@ export default function BookingForm({
       return;
     }
 
-    router.replace("/dashboard?booking=success#recent-bookings");
+    router.replace(`/dashboard?booking=success&bookingId=${encodeURIComponent(data.booking.id)}#recent-bookings`);
     
   } catch (error) {
     console.error(error);
@@ -70,7 +72,7 @@ export default function BookingForm({
 
       <div>
         <label className="mb-2 block font-semibold text-gray-900">
-          Preferred Date
+          {t("preferredDate")}
         </label>
 
         <input className="w-full rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
@@ -84,7 +86,7 @@ export default function BookingForm({
 
       <div>
         <label className="mb-2 block font-semibold text-gray-900">
-          Measurement Address
+          {t("measurementAddress")}
         </label>
 
         <textarea
@@ -99,7 +101,7 @@ export default function BookingForm({
 
       <div>
         <label className="mb-2 block font-semibold text-gray-900">
-          Notes
+          {t("notes")}
         </label>
 
         <textarea
@@ -116,11 +118,11 @@ export default function BookingForm({
   disabled={loading}
   className="w-full rounded-xl bg-amber-700 px-8 py-4 font-semibold text-white hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
 >
-  {loading ? "Confirming booking..." : `Confirm booking with ${tailorName}`}
+  {loading ? t("confirmingBooking") : `${t("confirmBookingWith")} ${tailorName}`}
 </button>
 
       <p className="text-center text-xs text-gray-500">
-        The tailor will review your request before sending a quotation.
+        {t("bookingReviewNote")}
       </p>
 
     </form>

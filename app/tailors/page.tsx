@@ -40,7 +40,16 @@ export default async function TailorsPage({
           }
         : {}),
     },
-    include: { services: true },
+    select: {
+      id: true,
+      shopName: true,
+      city: true,
+      description: true,
+      experience: true,
+      isVerified: true,
+      shopPhoto: true,
+      services: { select: { id: true, serviceName: true, price: true } },
+    },
     orderBy: { createdAt: "desc" },
   });
 

@@ -14,7 +14,7 @@ import RecentOrders from "../components/dashboard/RecentOrders";
 import BookingSuccessToast from "../components/dashboard/BookingSuccessToast";
 
 type DashboardProps = {
-  searchParams: Promise<{ booking?: string }>;
+  searchParams: Promise<{ booking?: string; bookingId?: string }>;
 };
 
 export default async function DashboardPage({ searchParams }: DashboardProps) {
@@ -60,6 +60,15 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
 
   if (!customer) redirect("/login");
 
+  const confirmedBooking = query.booking === "success" && query.bookingId
+    ? await prisma.booking.findFirst({
+        where: { id: query.bookingId, customerId: session.user.id },
+        select: {
+          tailor: { select: { shopName: true, phone: true } },
+        },
+      })
+    : null;
+
   const location = customer.address?.toLowerCase().trim() ?? "";
   const locationWords = location.split(/[^a-z0-9]+/).filter((word) => word.length > 2);
   const tailors = allTailors
@@ -86,7 +95,7 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
           <DashboardHeader name={customerName} email={customer.email} />
 
           {query.booking === "success" && (
-            <BookingSuccessToast />
+            <BookingSuccessToast tailor={confirmedBooking?.tailor ?? null} />
           )}
 
           {/* Welcome section */}

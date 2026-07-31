@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Menu, Scissors, X } from "lucide-react";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import LanguageSelector from "./LanguageSelector";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 
 type UserData = {
@@ -18,6 +20,7 @@ type UserData = {
 export default function Navbar() {
   const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const [user, setUser] = useState<UserData | null>(null);
 
@@ -53,27 +56,28 @@ export default function Navbar() {
           {!user?.isTailor && (
             <>
               <Link href="/#popular-services" className="hover:text-amber-700">
-                Services
+                {t("services")}
               </Link>
 
               <Link href="/tailors" className="hover:text-amber-700">
-                Tailors
+                {t("tailors")}
               </Link>
             </>
           )}
 
           <Link href="/#how-it-works"
             className="text-gray-700 transition hover:text-amber-700">
-            How It Works
+            {t("howItWorks")}
           </Link>
 
           <Link href="/#contact" className="hover:text-amber-700">
-            Contact
+            {t("contact")}
           </Link>
         </div>
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
+          <LanguageSelector compact />
           <button
             type="button"
             onClick={() => setIsMenuOpen((prev) => !prev)}
@@ -90,14 +94,14 @@ export default function Navbar() {
                   href="/login"
                   className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
                 >
-                  Login
+                  {t("login")}
                 </Link>
 
                 <Link
                   href="/register"
                   className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
                 >
-                  Sign Up
+                  {t("signUp")}
                 </Link>
               </>
             ) : (
@@ -108,7 +112,7 @@ export default function Navbar() {
                       href="/tailor-dashboard"
                       className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
                     >
-                      Tailor Dashboard
+                      {t("tailorDashboard")}
                     </Link>
 
                   </>
@@ -118,14 +122,14 @@ export default function Navbar() {
                       href="/dashboard"
                       className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
                     >
-                      Dashboard
+                      {t("dashboard")}
                     </Link>
 
                     <Link
                       href="/become-tailor"
                       className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
                     >
-                      Become a Tailor
+                      {t("becomeTailor")}
                     </Link>
                   </>
                 )}
@@ -134,7 +138,7 @@ export default function Navbar() {
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="rounded-lg border border-red-500 px-5 py-2 text-red-600 hover:bg-red-50"
                 >
-                  Logout
+                  {t("logout")}
                 </button>
               </>
             )}
@@ -149,18 +153,18 @@ export default function Navbar() {
               {!user?.isTailor && (
                 <>
                   <Link href="/#popular-services" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                    Services
+                    {t("services")}
                   </Link>
                   <Link href="/tailors" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                    Tailors
+                    {t("tailors")}
                   </Link>
                 </>
               )}
               <Link href="/#how-it-works" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                How It Works
+                {t("howItWorks")}
               </Link>
               <Link href="/#contact" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                Contact
+                {t("contact")}
               </Link>
             </div>
 
@@ -171,14 +175,14 @@ export default function Navbar() {
                   className="rounded-lg border border-amber-700 px-5 py-3 text-center text-amber-700 hover:bg-amber-50"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Login
+                  {t("login")}
                 </Link>
                 <Link
                   href="/register"
                   className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Sign Up
+                  {t("signUp")}
                 </Link>
               </div>
             ) : (
@@ -190,7 +194,7 @@ export default function Navbar() {
                       className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Tailor Dashboard
+                      {t("tailorDashboard")}
                     </Link>
                   </>
                 ) : (
@@ -200,14 +204,14 @@ export default function Navbar() {
                       className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Dashboard
+                      {t("dashboard")}
                     </Link>
                     <Link
                       href="/become-tailor"
                       className="rounded-lg border border-amber-700 px-5 py-3 text-center text-amber-700 hover:bg-amber-50"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Become a Tailor
+                      {t("becomeTailor")}
                     </Link>
                   </>
                 )}
@@ -218,7 +222,7 @@ export default function Navbar() {
                   }}
                   className="rounded-lg border border-red-500 px-5 py-3 text-center text-red-600 hover:bg-red-50"
                 >
-                  Logout
+                  {t("logout")}
                 </button>
               </div>
             )}

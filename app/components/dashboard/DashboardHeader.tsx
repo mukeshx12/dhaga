@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { LogOut } from "lucide-react";
+import LanguageSelector from "../LanguageSelector";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
   name: string;
@@ -11,15 +13,17 @@ type Props = {
 
 export default function DashboardHeader({ name, email }: Props) {
   const initial = name.trim().charAt(0).toUpperCase() || "C";
+  const { t } = useLanguage();
 
   return (
     <header className="flex flex-col gap-5 rounded-2xl bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">Customer dashboard</p>
-        <h1 className="mt-1 text-2xl font-bold text-gray-900">Welcome back, {name}</h1>
+        <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">{t("customerDashboard")}</p>
+        <h1 className="mt-1 text-2xl font-bold text-gray-900">{t("welcomeBack")}, {name}</h1>
       </div>
 
       <div className="flex items-center gap-3">
+        <LanguageSelector compact />
         <Link
           href="/profile"
           aria-label="Open customer profile"
@@ -40,7 +44,7 @@ export default function DashboardHeader({ name, email }: Props) {
           className="inline-flex items-center gap-2 rounded-xl border border-red-200 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50"
         >
           <LogOut size={18} />
-          <span className="hidden sm:inline">Logout</span>
+          <span className="hidden sm:inline">{t("logout")}</span>
         </button>
       </div>
     </header>

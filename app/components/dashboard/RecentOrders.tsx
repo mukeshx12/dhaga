@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CalendarDays, MapPin } from "lucide-react";
+import { CalendarDays, MapPin, MessageCircle, Phone } from "lucide-react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type BookingStatus = "PENDING" | "ACCEPTED" | "QUOTATION_SENT" | "CONFIRMED" | "REJECTED" | "COMPLETED" | "CANCELLED";
 
@@ -12,7 +13,7 @@ type Booking = {
   status: BookingStatus;
   quotationPrice?: string | null;
   quotationNotes?: string | null;
-  tailor: { id: string; shopName: string; city: string };
+  tailor: { id: string; shopName: string; city: string; phone: string };
 };
 
 const statusStyles: Record<BookingStatus, string> = {
@@ -28,6 +29,7 @@ const statusStyles: Record<BookingStatus, string> = {
 export default function RecentOrders() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     let active = true;
@@ -56,13 +58,13 @@ export default function RecentOrders() {
     ));
   }
 
-  if (loading) return <p className="py-10 text-center text-gray-500">Loading your bookings...</p>;
+  if (loading) return <p className="py-10 text-center text-gray-500">{t("loadingBookings")}</p>;
 
   if (bookings.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50 p-10 text-center">
-        <p className="font-semibold text-gray-900">No bookings yet</p>
-        <Link href="/tailors" className="mt-3 inline-block text-sm font-semibold text-amber-700 hover:underline">Find a tailor</Link>
+        <p className="font-semibold text-gray-900">{t("noBookings")}</p>
+        <Link href="/tailors" className="mt-3 inline-block text-sm font-semibold text-amber-700 hover:underline">{t("findTailor")}</Link>
       </div>
     );
   }
@@ -78,21 +80,36 @@ export default function RecentOrders() {
               </Link>
               <div className="mt-2 flex flex-wrap gap-4 text-sm text-gray-600">
                 <span className="flex items-center gap-1.5"><MapPin size={16} />{booking.tailor.city}</span>
-                <span className="flex items-center gap-1.5"><CalendarDays size={16} />{new Date(booking.bookingDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                <span className="flex items-center gap-1.5"><CalendarDays size={16} />{new Date(booking.bookingDate).toLocaleDateString(language === "hi" ? "hi-IN" : "en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
               </div>
             </div>
             <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[booking.status]}`}>
-              {booking.status === "COMPLETED" ? "DELIVERED" : booking.status.replace("_", " ")}
+              {booking.status === "COMPLETED" ? t("delivered") : booking.status.replace("_", " ")}
             </span>
+          </div>
+
+          <div className="mt-4 flex flex-col gap-3 rounded-xl border border-green-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("tailorContact")}</p>
+              <a href={`tel:${booking.tailor.phone}`} className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-900 hover:text-amber-700"><Phone size={16} />{booking.tailor.phone}</a>
+            </div>
+            <a
+              href={`https://wa.me/${booking.tailor.phone.replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
+            >
+              <MessageCircle size={17} /> {t("chatWhatsApp")}
+            </a>
           </div>
 
           {booking.status === "QUOTATION_SENT" && booking.quotationPrice && (
             <div className="mt-5 rounded-xl border border-purple-200 bg-white p-4">
-              <p className="font-semibold text-gray-900">Quotation: ₹{Number(booking.quotationPrice).toFixed(2)}</p>
-              <p className="mt-1 text-sm text-gray-600">{booking.quotationNotes || "No quotation notes provided."}</p>
+              <p className="font-semibold text-gray-900">{t("quotation")}: ₹{Number(booking.quotationPrice).toFixed(2)}</p>
+              <p className="mt-1 text-sm text-gray-600">{booking.quotationNotes || t("noQuotationNotes")}</p>
               <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                <button type="button" onClick={() => respondToQuotation(booking.id, "ACCEPT")} className="rounded-xl bg-green-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700">Accept quotation</button>
-                <button type="button" onClick={() => respondToQuotation(booking.id, "REJECT")} className="rounded-xl border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50">Reject quotation</button>
+                <button type="button" onClick={() => respondToQuotation(booking.id, "ACCEPT")} className="rounded-xl bg-green-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-green-700">{t("acceptQuotation")}</button>
+                <button type="button" onClick={() => respondToQuotation(booking.id, "REJECT")} className="rounded-xl border border-red-200 px-5 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50">{t("rejectQuotation")}</button>
               </div>
             </div>
           )}

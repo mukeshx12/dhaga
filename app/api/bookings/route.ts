@@ -24,7 +24,6 @@ console.log("Session User Email:", session.user.email);
   include: {
     tailor: {
       select: {
-        id: true,
         shopName: true,
         city: true,
       },
@@ -66,7 +65,7 @@ if (!session?.user?.id) {
   );
 }
 
-    const customerIsTailor = await prisma.tailorProfile.findUnique({
+      const customerIsTailor = await prisma.tailorProfile.findUnique({
       where: { userId: session.user.id },
       select: { id: true },
     });
@@ -105,21 +104,21 @@ if (!session?.user?.id) {
       notes,
     });
 
-    const activeBookingCount = await prisma.booking.count({
+    const existingBooking = await prisma.booking.findFirst({
   where: {
     customerId: session.user.id,
     tailorId,
     status: {
-      in: ["PENDING", "ACCEPTED", "QUOTATION_SENT", "CONFIRMED"],
+      in: ["PENDING", "ACCEPTED"],
     },
   },
 });
 
-if (activeBookingCount >= 3) {
+if (existingBooking) {
   return NextResponse.json(
     {
       message:
-        "You already have 3 active bookings with this tailor. Complete or cancel one before booking again.",
+        "You already have an active booking with this tailor.",
     },
     {
       status: 400,

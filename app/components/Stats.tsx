@@ -33,7 +33,7 @@ export default function Stats() {
     <section className="bg-amber-700 py-20">
       <div className="mx-auto max-w-7xl px-6">
 
-        <div className="grid gap-10 text-center md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 text-center md:grid-cols-2 lg:grid-cols-4">
 
           {stats.map((stat) => {
             const Icon = stat.icon;

@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { MapPin, Phone, BadgeCheck, Star } from "lucide-react";
+import { MapPin, BadgeCheck, Star } from "lucide-react";
 import BookMeasurementButton from "./BookMeasurementButton";
 import SaveTailorButton from "./SaveTailorButton";
 import { getServerSession } from "next-auth";
@@ -19,20 +19,22 @@ export default async function TailorProfilePage({ params }: Props) {
   
   const { id } = await params;
 
-console.log("Tailor ID:", id);
   const tailor = await prisma.tailorProfile.findUnique({
-    
-    where: {
-      id,
+    where: { id },
+    select: {
+      id: true,
+      shopName: true,
+      city: true,
+      experience: true,
+      description: true,
+      isVerified: true,
+      shopPhoto: true,
+      workPhotos: true,
+      services: {
+        orderBy: { createdAt: "asc" },
+        select: { id: true, serviceName: true, price: true },
+      },
     },
-    include: {
-    user: true,
-    services: {
-    orderBy: {
-    createdAt: "asc",
-    },
-  },
-},
   });
 
   if (!tailor) {
@@ -88,11 +90,6 @@ console.log("Tailor ID:", id);
           <div className="mt-5 flex items-center gap-2 text-gray-700">
             <MapPin size={20} />
             <span>{tailor.city}</span>
-          </div>
-
-          <div className="mt-4 flex items-center gap-2 text-gray-700">
-            <Phone size={20} />
-            <span>{tailor.phone}</span>
           </div>
 
           <div className="mt-4 flex items-center gap-2 text-gray-700">
