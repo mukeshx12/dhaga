@@ -13,6 +13,7 @@ import Testimonials from "./components/Testimonials";
 import BecomeTailor from "./components/BecomeTailor";
 import Stats from "./components/Stats";
 import Contact from "./components/Contact";
+import T from "./components/LocalizedText";
 
 export const dynamic = "force-dynamic";
 
@@ -55,7 +56,7 @@ export default async function Home() {
           className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-6 py-3.5 text-center text-base font-semibold text-white shadow-sm transition hover:bg-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56 sm:text-lg"
         >
           <CalendarCheck aria-hidden="true" size={21} />
-          Book Measurement
+          <T en="Book Measurement" hi="माप बुक करें" />
         </Link>
  
         <Link
@@ -63,7 +64,7 @@ export default async function Home() {
           className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-700 bg-white px-6 py-3.5 text-center text-base font-semibold text-amber-700 transition hover:bg-amber-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56 sm:text-lg"
         >
           <Search aria-hidden="true" size={21} />
-          Browse Tailors
+          <T en="Browse Tailors" hi="दर्जी खोजें" />
         </Link>
       </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Heart } from "lucide-react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
   tailorId: string;
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export default function SaveTailorButton({ tailorId, initiallySaved }: Props) {
+  const { language } = useLanguage();
   const [saved, setSaved] = useState(initiallySaved);
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +34,7 @@ export default function SaveTailorButton({ tailorId, initiallySaved }: Props) {
       className="mt-10 inline-flex items-center gap-2 rounded-xl border border-amber-700 px-6 py-4 font-semibold text-amber-800 hover:bg-amber-50 disabled:opacity-50"
     >
       <Heart size={20} className={saved ? "fill-current" : ""} />
-      {saved ? "Saved tailor" : "Save tailor"}
+      {saved ? (language === "hi" ? "सहेजा गया दर्जी" : "Saved tailor") : (language === "hi" ? "दर्जी सहेजें" : "Save tailor")}
     </button>
   );
 }

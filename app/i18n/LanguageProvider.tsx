@@ -1,8 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-
-export type Language = "en" | "hi";
+import { isLanguage, languageCookieName, type Language } from "./config";
 
 const messages = {
   en: {
@@ -84,13 +83,13 @@ type LanguageContextValue = {
 
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+export function LanguageProvider({ children, initialLanguage }: { children: React.ReactNode; initialLanguage: Language }) {
+  const [language, setLanguageState] = useState<Language>(initialLanguage);
 
   useEffect(() => {
     try {
-      const savedLanguage = window.localStorage.getItem("dhaga-language");
-      if (savedLanguage === "en" || savedLanguage === "hi") {
+      const savedLanguage = window.localStorage.getItem(languageCookieName);
+      if (isLanguage(savedLanguage) && savedLanguage !== initialLanguage) {
         // The persisted preference is available only after the client hydrates.
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLanguageState(savedLanguage);
@@ -98,17 +97,18 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       }
     } catch {
       // Some mobile/private browsers block storage. The app should still load.
-      document.documentElement.lang = "en";
+      document.documentElement.lang = initialLanguage;
     }
-  }, []);
+  }, [initialLanguage]);
 
   const value = useMemo<LanguageContextValue>(() => ({
     language,
     setLanguage(nextLanguage) {
       setLanguageState(nextLanguage);
       document.documentElement.lang = nextLanguage;
+      document.cookie = `${languageCookieName}=${nextLanguage}; path=/; max-age=31536000; samesite=lax`;
       try {
-        window.localStorage.setItem("dhaga-language", nextLanguage);
+        window.localStorage.setItem(languageCookieName, nextLanguage);
       } catch {
         // Keep the in-memory language active when persistence is unavailable.
       }

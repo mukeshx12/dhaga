@@ -7,6 +7,7 @@ import { ClipboardList, Home, LogOut, Scissors, Store } from "lucide-react";
 import TailorBookings from "./TailorBookings";
 import TailorListing from "./TailorListing";
 import TailorServices from "@/app/components/dashboard/TailorServices";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Listing = {
   shopName: string;
@@ -46,10 +47,12 @@ const sections = [
 
 export default function TailorDashboardTabs({ initialListing }: Props) {
   const [activeSection, setActiveSection] = useState<Section>("requests");
+  const { language } = useLanguage();
+  const hi = language === "hi";
 
   return (
     <>
-      <nav aria-label="Tailor dashboard navigation" className="mt-8">
+      <nav aria-label={hi ? "दर्जी डैशबोर्ड नेविगेशन" : "Tailor dashboard navigation"} className="mt-8">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex gap-2">
             <Link
@@ -57,7 +60,7 @@ export default function TailorDashboardTabs({ initialListing }: Props) {
               className="flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-gray-700 transition hover:border-amber-300 hover:bg-amber-50 hover:text-amber-800"
             >
               <Home size={18} />
-              Home
+              {hi ? "होम" : "Home"}
             </Link>
 
             <button
@@ -66,7 +69,7 @@ export default function TailorDashboardTabs({ initialListing }: Props) {
               className="flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
             >
               <LogOut size={18} />
-              Logout
+              {hi ? "लॉग आउट" : "Logout"}
             </button>
           </div>
 
@@ -88,7 +91,7 @@ export default function TailorDashboardTabs({ initialListing }: Props) {
                 }`}
               >
                 <Icon size={18} />
-                {section.label}
+                {hi ? ({ requests: "ग्राहक अनुरोध", services: "सेवाएं और कीमतें", profile: "दर्जी प्रोफ़ाइल" } as const)[section.id] : section.label}
               </button>
             );
           })}

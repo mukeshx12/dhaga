@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Profile = {
   name: string;
@@ -10,6 +11,8 @@ type Profile = {
 };
 
 export default function ProfilePage() {
+  const { language } = useLanguage();
+  const hi = language === "hi";
   const [profile, setProfile] = useState<Profile>({
     name: "",
     email: "",
@@ -67,10 +70,10 @@ export default function ProfilePage() {
         return;
       }
 
-      alert("Profile updated successfully!");
+      alert(hi ? "प्रोफ़ाइल सफलतापूर्वक अपडेट हुई!" : "Profile updated successfully!");
     } catch (error) {
       console.error(error);
-      alert("Something went wrong.");
+      alert(hi ? "कुछ गलत हो गया।" : "Something went wrong.");
     } finally {
       setSaving(false);
     }
@@ -79,7 +82,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-16">
-        <p>Loading profile...</p>
+        <p>{hi ? "प्रोफ़ाइल लोड हो रही है..." : "Loading profile..."}</p>
       </main>
     );
   }
@@ -90,11 +93,11 @@ export default function ProfilePage() {
 
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-gray-900">
-          My Profile
+          {hi ? "मेरी प्रोफ़ाइल" : "My Profile"}
         </h1>
 
         <p className="mt-2 text-gray-600">
-          Manage your personal information and keep your account up to date.
+          {hi ? "अपनी व्यक्तिगत जानकारी संभालें और खाता अपडेट रखें।" : "Manage your personal information and keep your account up to date."}
         </p>
       </div>
 
@@ -120,7 +123,7 @@ export default function ProfilePage() {
             </p>
 
             <span className="mt-5 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
-              Customer
+              {hi ? "ग्राहक" : "Customer"}
             </span>
 
           </div>
@@ -129,21 +132,21 @@ export default function ProfilePage() {
 
             <div>
               <p className="text-sm text-gray-500">
-                Phone
+                {hi ? "फोन" : "Phone"}
               </p>
 
               <p className="font-medium text-gray-900">
-                {profile.phone || "Not Added"}
+                {profile.phone || (hi ? "नहीं जोड़ा गया" : "Not Added")}
               </p>
             </div>
 
             <div>
               <p className="text-sm text-gray-500">
-                Address
+                {hi ? "पता" : "Address"}
               </p>
 
               <p className="font-medium text-gray-900">
-                {profile.address || "Not Added"}
+                {profile.address || (hi ? "नहीं जोड़ा गया" : "Not Added")}
               </p>
             </div>
 
@@ -155,7 +158,7 @@ export default function ProfilePage() {
         <div className="lg:col-span-2 rounded-3xl bg-white p-10 shadow">
 
           <h2 className="text-2xl font-bold text-gray-900">
-            Edit Profile
+            {hi ? "प्रोफ़ाइल संपादित करें" : "Edit Profile"}
           </h2>
 
           <form
@@ -165,7 +168,7 @@ export default function ProfilePage() {
 
             <div>
               <label className="mb-2 block font-medium text-gray-700">
-                Full Name
+                {hi ? "पूरा नाम" : "Full Name"}
               </label>
 
               <input
@@ -183,7 +186,7 @@ export default function ProfilePage() {
 
             <div>
               <label className="mb-2 block font-medium text-gray-700">
-                Email Address
+                {hi ? "ईमेल पता" : "Email Address"}
               </label>
 
               <input
@@ -196,7 +199,7 @@ export default function ProfilePage() {
 
             <div>
               <label className="mb-2 block font-medium text-gray-700">
-                Phone Number
+                {hi ? "फोन नंबर" : "Phone Number"}
               </label>
 
               <input
@@ -208,14 +211,14 @@ export default function ProfilePage() {
                     phone: e.target.value,
                   })
                 }
-                placeholder="Enter phone number"
+                placeholder={hi ? "फोन नंबर दर्ज करें" : "Enter phone number"}
                 className="w-full rounded-xl border border-gray-300 bg-white p-4 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
               />
             </div>
 
             <div>
               <label className="mb-2 block font-medium text-gray-700">
-                Address
+                {hi ? "पता" : "Address"}
               </label>
 
               <textarea
@@ -227,7 +230,7 @@ export default function ProfilePage() {
                     address: e.target.value,
                   })
                 }
-                placeholder="Enter your address"
+                placeholder={hi ? "अपना पता दर्ज करें" : "Enter your address"}
                 className="w-full rounded-xl border border-gray-300 bg-white p-4 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
               />
             </div>
@@ -239,7 +242,7 @@ export default function ProfilePage() {
                 disabled={saving}
                 className="rounded-xl bg-amber-700 px-8 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {saving ? "Saving..." : "Save Changes"}
+                {saving ? (hi ? "सहेज रहे हैं..." : "Saving...") : (hi ? "बदलाव सहेजें" : "Save Changes")}
               </button>
 
             </div>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import router from "next/dist/shared/lib/router/router";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 
 
@@ -12,6 +12,8 @@ export default function BecomeTailorPage() {
 
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { language } = useLanguage();
+  const hi = language === "hi";
   useEffect(() => {
   if (status === "loading") return;
 
@@ -20,8 +22,6 @@ export default function BecomeTailorPage() {
   }
 }, [session, status, router]);
 
-console.log("Session:", session);
-console.log("Status:", status);
   const [formData, setFormData] = useState({
     shopName: "",
     phone: "",
@@ -77,7 +77,7 @@ console.log("Status:", status);
 
   } catch (error) {
     console.error(error);
-    alert("Something went wrong.");
+    alert(hi ? "कुछ गलत हो गया।" : "Something went wrong.");
   }
 };
 
@@ -86,11 +86,11 @@ console.log("Status:", status);
       <div className="mx-auto max-w-4xl rounded-3xl bg-white p-10 shadow-lg">
 
         <h1 className="text-4xl font-bold text-gray-900">
-          Become a Dhaga Tailor
+          {hi ? "Dhaga दर्जी बनें" : "Become a Dhaga Tailor"}
         </h1>
 
         <p className="mt-3 text-gray-600">
-          Fill in your business details to start receiving tailoring orders.
+          {hi ? "सिलाई ऑर्डर प्राप्त करने के लिए अपने व्यवसाय का विवरण भरें।" : "Fill in your business details to start receiving tailoring orders."}
         </p>
 
         <form
@@ -100,7 +100,7 @@ console.log("Status:", status);
 
           <div>
             <label className="mb-2 block font-medium text-gray-700">
-              Shop Name
+              {hi ? "दुकान का नाम" : "Shop Name"}
             </label>
 
             <input
@@ -115,7 +115,7 @@ console.log("Status:", status);
 
           <div>
             <label className="mb-2 block font-medium text-gray-700">
-              Phone Number
+              {hi ? "फोन नंबर" : "Phone Number"}
             </label>
 
             <input
@@ -130,7 +130,7 @@ console.log("Status:", status);
 
           <div>
             <label className="mb-2 block font-medium text-gray-700">
-              City
+              {hi ? "शहर" : "City"}
             </label>
 
             <input
@@ -145,7 +145,7 @@ console.log("Status:", status);
 
           <div>
             <label className="mb-2 block font-medium text-gray-700">
-              Experience
+              {hi ? "अनुभव" : "Experience"}
             </label>
 
             <input
@@ -160,7 +160,7 @@ console.log("Status:", status);
 
           <div className="md:col-span-2">
             <label className="mb-2 block font-medium text-gray-700">
-              Address
+              {hi ? "पता" : "Address"}
             </label>
 
             <input
@@ -168,14 +168,14 @@ console.log("Status:", status);
               name="address"
               value={formData.address}
               onChange={handleChange}
-              placeholder="Full Shop Address"
+              placeholder={hi ? "दुकान का पूरा पता" : "Full Shop Address"}
               className="w-full rounded-xl border border-gray-300 p-4 outline-none focus:border-amber-700"
             />
           </div>
 
           <div className="md:col-span-2">
             <label className="mb-2 block font-medium text-gray-700">
-              About Your Work
+              {hi ? "आपके काम के बारे में" : "About Your Work"}
             </label>
 
             <textarea
@@ -183,7 +183,7 @@ console.log("Status:", status);
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Tell customers about your tailoring experience..."
+              placeholder={hi ? "ग्राहकों को अपने सिलाई अनुभव के बारे में बताएं..." : "Tell customers about your tailoring experience..."}
               className="w-full rounded-xl border border-gray-300 p-4 outline-none focus:border-amber-700"
             />
           </div>
@@ -193,7 +193,7 @@ console.log("Status:", status);
               type="submit"
               className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800"
             >
-              Submit Application
+              {hi ? "आवेदन जमा करें" : "Submit Application"}
             </button>
           </div>
 

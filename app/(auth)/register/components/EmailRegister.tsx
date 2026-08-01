@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
   onBack: () => void;
@@ -9,6 +10,8 @@ type Props = {
 
 export default function EmailRegister({ onBack }: Props) {
   const router = useRouter();
+  const { language } = useLanguage();
+  const hi = language === "hi";
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -109,7 +112,7 @@ export default function EmailRegister({ onBack }: Props) {
           <input
             type="text"
             name="name"
-            placeholder="Full Name"
+            placeholder={hi ? "पूरा नाम" : "Full Name"}
             value={formData.name}
             onChange={handleChange}
             required
@@ -119,7 +122,7 @@ export default function EmailRegister({ onBack }: Props) {
           <input
             type="email"
             name="email"
-            placeholder="Email Address"
+            placeholder={hi ? "ईमेल पता" : "Email Address"}
             value={formData.email}
             onChange={handleChange}
             required
@@ -129,7 +132,7 @@ export default function EmailRegister({ onBack }: Props) {
           <input
             type="password"
             name="password"
-            placeholder="Password — at least 8 characters"
+            placeholder={hi ? "पासवर्ड — कम से कम 8 अक्षर" : "Password — at least 8 characters"}
             value={formData.password}
             onChange={handleChange}
             required
@@ -140,7 +143,7 @@ export default function EmailRegister({ onBack }: Props) {
           <input
             type="password"
             name="confirmPassword"
-            placeholder="Confirm Password"
+            placeholder={hi ? "पासवर्ड की पुष्टि करें" : "Confirm Password"}
             value={formData.confirmPassword}
             onChange={handleChange}
             required
@@ -153,19 +156,17 @@ export default function EmailRegister({ onBack }: Props) {
             disabled={loading}
             className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading
-              ? "Creating Account..."
-              : "Create Email Account"}
+            {loading ? (hi ? "खाता बनाया जा रहा है..." : "Creating Account...") : (hi ? "ईमेल खाता बनाएं" : "Create Email Account")}
           </button>
         </form>
 
         <p className="mt-7 text-center text-sm text-gray-600">
-          Already registered?{" "}
+          {hi ? "पहले से पंजीकृत हैं?" : "Already registered?"}{" "}
           <a
             href="/login"
             className="font-semibold text-amber-700 hover:underline"
           >
-            Login
+            {hi ? "लॉग इन" : "Login"}
           </a>
         </p>
       </div>

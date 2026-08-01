@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MapPin, Search } from "lucide-react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 export default function SearchBar() {
   const router = useRouter();
+  const { language } = useLanguage();
 
   const [city, setCity] = useState("");
   const [service, setService] = useState("");
@@ -23,7 +25,7 @@ export default function SearchBar() {
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 type="text"
-                placeholder="Enter your city"
+                placeholder={language === "hi" ? "अपना शहर दर्ज करें" : "Enter your city"}
                 className="w-full bg-transparent text-gray-900 placeholder:text-gray-400 outline-none"
               />
             </div>
@@ -36,7 +38,7 @@ export default function SearchBar() {
                 value={service}
                 onChange={(e) => setService(e.target.value)}
                 type="text"
-                placeholder="Search Blouse, Suit..."
+                placeholder={language === "hi" ? "ब्लाउज़, सूट खोजें..." : "Search Blouse, Suit..."}
                 className="w-full bg-transparent text-gray-900 placeholder:text-gray-400 outline-none"
               />
             </div>
@@ -62,7 +64,7 @@ export default function SearchBar() {
               }}
               className="rounded-xl bg-amber-700 px-10 py-4 text-white transition hover:bg-amber-800 w-full lg:w-auto"
             >
-              Search
+              {language === "hi" ? "खोजें" : "Search"}
             </button>
           </div>
         </div>

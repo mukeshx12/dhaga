@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Booking = {
   id: string;
@@ -18,6 +19,8 @@ type Booking = {
 };
 
 export default function TailorBookings() {
+  const { language } = useLanguage();
+  const hi = language === "hi";
 
   const [quotationPrice, setQuotationPrice] = useState("");
 const [quotationNotes, setQuotationNotes] = useState("");
@@ -134,7 +137,7 @@ async function sendQuotation(
   if (loading) {
     return (
       <p className="mt-10 text-gray-500">
-        Loading bookings...
+        {hi ? "बुकिंग लोड हो रही हैं..." : "Loading bookings..."}
       </p>
     );
   }
@@ -143,11 +146,11 @@ async function sendQuotation(
     return (
       <div className="mt-10 rounded-2xl bg-white p-10 text-center shadow">
         <h2 className="text-2xl font-semibold">
-          No Bookings Yet
+          {hi ? "अभी कोई बुकिंग नहीं" : "No Bookings Yet"}
         </h2>
 
         <p className="mt-3 text-gray-500">
-          Customer bookings will appear here.
+          {hi ? "ग्राहक बुकिंग यहां दिखाई देंगी।" : "Customer bookings will appear here."}
         </p>
       </div>
     );
@@ -158,13 +161,13 @@ async function sendQuotation(
     <section className="mt-12">
       <div>
         <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">
-          Customer requests
+          {hi ? "ग्राहक अनुरोध" : "Customer requests"}
         </p>
         <h2 className="mt-1 text-2xl font-bold text-gray-900">
-          Who booked you
+          {hi ? "आपको किसने बुक किया" : "Who booked you"}
         </h2>
         <p className="mt-2 text-sm text-gray-600">
-          Review customer details, measurement visits and quotation status.
+          {hi ? "ग्राहक विवरण, माप की यात्रा और मूल्य प्रस्ताव की स्थिति देखें।" : "Review customer details, measurement visits and quotation status."}
         </p>
       </div>
 
@@ -182,11 +185,11 @@ async function sendQuotation(
             <div>
 
               <h2 className="text-xl font-semibold">
-                {booking.customer.name || "Customer"}
+                {booking.customer.name || (hi ? "ग्राहक" : "Customer")}
               </h2>
 
               <p className="text-gray-500">
-                {booking.customer.email || "No email provided"}
+                {booking.customer.email || (hi ? "ईमेल उपलब्ध नहीं" : "No email provided")}
               </p>
 
               {booking.customer.phone && (
@@ -216,18 +219,18 @@ async function sendQuotation(
           <div className="mt-6 space-y-2 text-gray-700">
 
             <p>
-              <strong>Measurement Date:</strong>{" "}
-              {new Date(booking.bookingDate).toLocaleDateString()}
+              <strong>{hi ? "माप की तारीख:" : "Measurement Date:"}</strong>{" "}
+              {new Date(booking.bookingDate).toLocaleDateString(hi ? "hi-IN" : "en-IN")}
             </p>
 
             <p>
-              <strong>Address:</strong>{" "}
+              <strong>{hi ? "पता:" : "Address:"}</strong>{" "}
               {booking.address}
             </p>
 
             <p>
-              <strong>Notes:</strong>{" "}
-              {booking.notes || "No notes provided"}
+              <strong>{hi ? "नोट्स:" : "Notes:"}</strong>{" "}
+              {booking.notes || (hi ? "कोई नोट उपलब्ध नहीं" : "No notes provided")}
             </p>
 
             {booking.status === "ACCEPTED" &&
@@ -235,12 +238,12 @@ async function sendQuotation(
            <div className="mt-6 rounded-xl border p-4">
 
     <h3 className="font-semibold">
-      Send Quotation
+      {hi ? "मूल्य प्रस्ताव भेजें" : "Send Quotation"}
     </h3>
 
     <input
       type="number"
-      placeholder="Quotation Price"
+      placeholder={hi ? "प्रस्तावित कीमत" : "Quotation Price"}
       value={quotationPrice}
       onChange={(e) =>
         setQuotationPrice(e.target.value)
@@ -250,7 +253,7 @@ async function sendQuotation(
 
     <textarea
       rows={3}
-      placeholder="Quotation Notes"
+      placeholder={hi ? "प्रस्ताव के नोट्स" : "Quotation Notes"}
       value={quotationNotes}
       onChange={(e) =>
         setQuotationNotes(e.target.value)
@@ -264,7 +267,7 @@ async function sendQuotation(
       }
       className="mt-3 rounded-xl bg-amber-700 px-5 py-2 text-white"
     >
-      Send Quotation
+      {hi ? "मूल्य प्रस्ताव भेजें" : "Send Quotation"}
     </button>
 
   </div>
@@ -274,17 +277,17 @@ async function sendQuotation(
   <div className="mt-6 rounded-xl border border-green-200 bg-green-50 p-4">
 
     <h3 className="font-semibold text-green-700">
-      Quotation Sent
+      {hi ? "मूल्य प्रस्ताव भेजा गया" : "Quotation Sent"}
     </h3>
 
     <p className="mt-2 text-gray-800">
-      <strong>Price:</strong> ₹
+      <strong>{hi ? "कीमत:" : "Price:"}</strong> ₹
       {Number(booking.quotationPrice).toFixed(2)}
     </p>
 
     <p className="mt-2 text-gray-800">
-      <strong>Notes:</strong>{" "}
-      {booking.quotationNotes || "No notes"}
+      <strong>{hi ? "नोट्स:" : "Notes:"}</strong>{" "}
+      {booking.quotationNotes || (hi ? "कोई नोट नहीं" : "No notes")}
     </p>
 
   </div>
@@ -301,7 +304,7 @@ async function sendQuotation(
         }
         className="rounded-xl bg-green-600 px-5 py-2 text-white hover:bg-green-700"
       >
-        Accept
+        {hi ? "स्वीकार करें" : "Accept"}
       </button>
 
       <button
@@ -310,7 +313,7 @@ async function sendQuotation(
         }
         className="rounded-xl bg-red-600 px-5 py-2 text-white hover:bg-red-700"
       >
-        Reject
+        {hi ? "अस्वीकार करें" : "Reject"}
       </button>
     </>
   )}
@@ -322,7 +325,7 @@ async function sendQuotation(
     }
     className="rounded-xl bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
   >
-    Mark as Completed
+    {hi ? "पूरा हुआ चिह्नित करें" : "Mark as Completed"}
   </button>
 )}
        </div>

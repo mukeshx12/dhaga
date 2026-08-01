@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CalendarDays, CheckCircle2, Clock3, Scissors, Users } from "lucide-react";
 import { prisma } from "@/lib/prisma";
+import T from "@/app/components/LocalizedText";
 
 export const dynamic = "force-dynamic";
 
@@ -32,9 +33,9 @@ export default async function AdminDashboardPage() {
   return (
     <div className="mx-auto max-w-7xl">
       <div>
-        <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">Overview</p>
-        <h1 className="mt-1 text-3xl font-bold text-gray-900">Admin dashboard</h1>
-        <p className="mt-2 text-gray-600">Monitor Dhaga customers, tailors, approvals and bookings.</p>
+        <p className="text-sm font-semibold uppercase tracking-wider text-amber-700"><T en="Overview" hi="अवलोकन" /></p>
+        <h1 className="mt-1 text-3xl font-bold text-gray-900"><T en="Admin dashboard" hi="एडमिन डैशबोर्ड" /></h1>
+        <p className="mt-2 text-gray-600"><T en="Monitor Dhaga customers, tailors, approvals and bookings." hi="Dhaga के ग्राहकों, दर्जियों, स्वीकृतियों और बुकिंग की निगरानी करें।" /></p>
       </div>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
@@ -52,8 +53,8 @@ export default async function AdminDashboardPage() {
 
       <section className="mt-10 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
         <div className="flex items-center justify-between gap-4">
-          <div><p className="text-sm font-semibold text-amber-700">Latest activity</p><h2 className="mt-1 text-xl font-bold text-gray-900">Recent bookings</h2></div>
-          <Link href="/admin/bookings" className="text-sm font-semibold text-amber-700 hover:underline">Manage bookings</Link>
+          <div><p className="text-sm font-semibold text-amber-700"><T en="Latest activity" hi="नवीनतम गतिविधि" /></p><h2 className="mt-1 text-xl font-bold text-gray-900"><T en="Recent bookings" hi="हाल की बुकिंग" /></h2></div>
+          <Link href="/admin/bookings" className="text-sm font-semibold text-amber-700 hover:underline"><T en="Manage bookings" hi="बुकिंग प्रबंधित करें" /></Link>
         </div>
 
         <div className="mt-6 overflow-x-auto">

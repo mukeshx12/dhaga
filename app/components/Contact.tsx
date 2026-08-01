@@ -1,4 +1,5 @@
 import { Mail, Phone, MapPin } from "lucide-react";
+import T from "./LocalizedText";
 
 export default function Contact() {
   return (
@@ -10,11 +11,11 @@ export default function Contact() {
 
         <div className="text-center">
           <h2 className="text-4xl font-bold text-gray-900">
-            Contact Us
+            <T en="Contact Us" hi="हमसे संपर्क करें" />
           </h2>
 
           <p className="mt-4 text-gray-600">
-            Have questions? We'd love to hear from you.
+            <T en="Have questions? We’d love to hear from you." hi="कोई सवाल है? हमें आपसे बात करके खुशी होगी।" />
           </p>
         </div>
 
@@ -23,7 +24,7 @@ export default function Contact() {
           <div className="rounded-2xl bg-white p-8 shadow">
             <Phone className="text-amber-700" size={30} />
             <h3 className="mt-4 text-xl font-semibold">
-              Phone
+              <T en="Phone" hi="फोन" />
             </h3>
 
             <p className="mt-2 text-gray-600">
@@ -34,7 +35,7 @@ export default function Contact() {
           <div className="rounded-2xl bg-white p-8 shadow">
             <Mail className="text-amber-700" size={30} />
             <h3 className="mt-4 text-xl font-semibold">
-              Email
+              <T en="Email" hi="ईमेल" />
             </h3>
 
             <p className="mt-2 text-gray-600">
@@ -45,7 +46,7 @@ export default function Contact() {
           <div className="rounded-2xl bg-white p-8 shadow">
             <MapPin className="text-amber-700" size={30} />
             <h3 className="mt-4 text-xl font-semibold">
-              Address
+              <T en="Address" hi="पता" />
             </h3>
 
             <p className="mt-2 text-gray-600">

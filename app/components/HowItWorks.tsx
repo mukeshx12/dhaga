@@ -4,31 +4,40 @@ import {
   Scissors,
   Truck,
 } from "lucide-react";
+import T from "./LocalizedText";
 
 const steps = [
   {
     title: "Find a Tailor",
+    titleHi: "दर्जी खोजें",
     description:
       "Search verified ladies' tailors near you by city, service, ratings, and price.",
     icon: Search,
+    descriptionHi: "शहर, सेवा, रेटिंग और कीमत के आधार पर पास के सत्यापित दर्जी खोजें।",
   },
   {
     title: "Book Home Measurement",
+    titleHi: "घर पर माप बुक करें",
     description:
       "Choose a convenient date and time for home measurement or visit the boutique.",
     icon: CalendarCheck,
+    descriptionHi: "घर पर माप या बुटीक जाने के लिए सुविधाजनक तारीख और समय चुनें।",
   },
   {
     title: "Tailoring Begins",
+    titleHi: "सिलाई शुरू होती है",
     description:
       "Upload your design, discuss requirements, and track stitching progress.",
     icon: Scissors,
+    descriptionHi: "डिज़ाइन अपलोड करें, आवश्यकताएं बताएं और सिलाई की प्रगति देखें।",
   },
   {
     title: "Delivery & Review",
+    titleHi: "डिलीवरी और समीक्षा",
     description:
       "Receive your outfit, try it on, and rate your tailoring experience.",
     icon: Truck,
+    descriptionHi: "अपना परिधान प्राप्त करें, पहनकर देखें और सिलाई अनुभव को रेट करें।",
   },
 ];
 
@@ -39,16 +48,15 @@ export default function HowItWorks() {
 
         <div className="text-center">
           <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
-            How It Works
+            <T en="How It Works" hi="यह कैसे काम करता है" />
           </span>
 
           <h2 className="mt-5 text-4xl font-bold text-gray-900">
-            Get Your Outfit Stitched in 4 Easy Steps
+            <T en="Get Your Outfit Stitched in 4 Easy Steps" hi="4 आसान चरणों में अपना परिधान सिलवाएं" />
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            From selecting a tailor to doorstep delivery, Dhaga makes
-            ladies' tailoring simple, transparent, and hassle-free.
+            <T en="From selecting a tailor to doorstep delivery, Dhaga makes ladies’ tailoring simple, transparent, and hassle-free." hi="दर्जी चुनने से लेकर घर पर डिलीवरी तक, Dhaga सिलाई को आसान और पारदर्शी बनाता है।" />
           </p>
         </div>
 
@@ -71,11 +79,11 @@ export default function HowItWorks() {
                 </div>
 
                 <h3 className="text-xl font-bold text-gray-900">
-                  {step.title}
+                  <T en={step.title} hi={step.titleHi} />
                 </h3>
 
                 <p className="mt-3 leading-7 text-gray-600">
-                  {step.description}
+                  <T en={step.description} hi={step.descriptionHi} />
                 </p>
               </div>
             );

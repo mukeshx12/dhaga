@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import BookingForm from "./BookingForm";
+import T from "@/app/components/LocalizedText";
 
 
 type Props = {
@@ -24,11 +25,11 @@ export default async function BookMeasurementPage({ params }: Props) {
       <div className="mx-auto max-w-3xl rounded-3xl bg-white p-10 shadow-lg">
 
         <h1 className="text-4xl font-bold text-gray-900">
-          Book Measurement
+          <T en="Book Measurement" hi="माप बुक करें" />
         </h1>
 
         <p className="mt-3 text-gray-600">
-          Booking with{" "}
+          <T en="Booking with" hi="बुकिंग:" />{" "}
           <span className="font-semibold">
             {tailor.shopName}
           </span>

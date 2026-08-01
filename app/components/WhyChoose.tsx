@@ -4,31 +4,40 @@ import {
   Truck,
   Star,
 } from "lucide-react";
+import T from "./LocalizedText";
 
 const features = [
   {
     title: "Verified Tailors",
+    titleHi: "सत्यापित दर्जी",
     description:
       "Every tailor is verified before joining Dhaga to ensure quality and trust.",
     icon: ShieldCheck,
+    descriptionHi: "गुणवत्ता और भरोसा सुनिश्चित करने के लिए हर दर्जी का सत्यापन किया जाता है।",
   },
   {
     title: "Home Measurement",
+    titleHi: "घर पर माप",
     description:
       "Book a tailor to visit your home for accurate measurements and convenience.",
     icon: Ruler,
+    descriptionHi: "सटीक माप और सुविधा के लिए दर्जी को घर बुलाएं।",
   },
   {
     title: "Doorstep Pickup & Delivery",
+    titleHi: "घर से पिकअप और डिलीवरी",
     description:
       "Get your fabric picked up and your stitched outfit delivered to your doorstep.",
     icon: Truck,
+    descriptionHi: "कपड़ा घर से पिकअप करवाएं और सिला हुआ परिधान घर पर पाएं।",
   },
   {
     title: "Top Rated Service",
+    titleHi: "उच्च रेटिंग वाली सेवा",
     description:
       "Compare ratings, reviews, and pricing before choosing the perfect tailor.",
     icon: Star,
+    descriptionHi: "सही दर्जी चुनने से पहले रेटिंग, समीक्षा और कीमत की तुलना करें।",
   },
 ];
 
@@ -38,16 +47,15 @@ export default function WhyChoose() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="text-center">
           <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
-            Why Choose Dhaga?
+            <T en="Why Choose Dhaga?" hi="Dhaga क्यों चुनें?" />
           </span>
 
           <h2 className="mt-6 text-4xl font-bold text-gray-900">
-            Tailoring Made Simple & Trusted
+            <T en="Tailoring Made Simple & Trusted" hi="सिलाई अब आसान और भरोसेमंद" />
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-            From home measurements to doorstep delivery, Dhaga connects you
-            with skilled ladies' tailors for a seamless stitching experience.
+            <T en="From home measurements to doorstep delivery, Dhaga connects you with skilled ladies’ tailors for a seamless stitching experience." hi="घर पर माप से लेकर डिलीवरी तक, Dhaga आपको कुशल महिला दर्जियों से जोड़ता है।" />
           </p>
         </div>
 
@@ -65,11 +73,11 @@ export default function WhyChoose() {
                 </div>
 
                 <h3 className="text-xl font-semibold text-gray-900">
-                  {feature.title}
+                  <T en={feature.title} hi={feature.titleHi} />
                 </h3>
 
                 <p className="mt-3 text-gray-600 leading-7">
-                  {feature.description}
+                  <T en={feature.description} hi={feature.descriptionHi} />
                 </p>
               </div>
             );

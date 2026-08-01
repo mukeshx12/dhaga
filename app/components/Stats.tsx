@@ -4,27 +4,32 @@ import {
   MapPin,
   Star,
 } from "lucide-react";
+import T from "./LocalizedText";
 
 const stats = [
   {
     icon: Users,
     value: "5,000+",
     label: "Happy Customers",
+    labelHi: "संतुष्ट ग्राहक",
   },
   {
     icon: Scissors,
     value: "1,200+",
     label: "Verified Tailors",
+    labelHi: "सत्यापित दर्जी",
   },
   {
     icon: MapPin,
     value: "50+",
     label: "Cities Covered",
+    labelHi: "शहरों में उपलब्ध",
   },
   {
     icon: Star,
     value: "25,000+",
     label: "Orders Completed",
+    labelHi: "पूरे हुए ऑर्डर",
   },
 ];
 
@@ -49,7 +54,7 @@ export default function Stats() {
                 </h2>
 
                 <p className="mt-2 text-amber-100">
-                  {stat.label}
+                  <T en={stat.label} hi={stat.labelHi} />
                 </p>
               </div>
             );

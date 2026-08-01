@@ -6,6 +6,7 @@ import BookMeasurementButton from "./BookMeasurementButton";
 import SaveTailorButton from "./SaveTailorButton";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
+import T from "@/app/components/LocalizedText";
 
 
 type Props = {
@@ -97,17 +98,17 @@ export default async function TailorProfilePage({ params }: Props) {
               fill="#F59E0B"
               className="text-yellow-500"
             />
-            <span>4.8 (New Tailor)</span>
+            <span>4.8 (<T en="New Tailor" hi="नया दर्जी" />)</span>
           </div>
 
           <div className="mt-8 rounded-2xl border border-amber-100 bg-amber-50 p-6 text-gray-900">
 
             <h3 className="text-xl font-semibold text-gray-900">
-              Experience
+              <T en="Experience" hi="अनुभव" />
             </h3>
 
             <p className="mt-2 text-gray-700">
-              {tailor.experience} Years
+              {tailor.experience} <T en="Years" hi="वर्ष" />
             </p>
 
           </div>
@@ -115,7 +116,7 @@ export default async function TailorProfilePage({ params }: Props) {
           <div className="mt-8">
 
             <h3 className="text-xl font-semibold text-gray-900">
-              About
+              <T en="About" hi="परिचय" />
             </h3>
 
             <p className="mt-3 text-gray-600">
@@ -126,12 +127,12 @@ export default async function TailorProfilePage({ params }: Props) {
 
           <div className="mt-10">
   <h2 className="text-2xl font-bold text-gray-900">
-    Services & Pricing
+    <T en="Services & Pricing" hi="सेवाएं और कीमतें" />
   </h2>
 
   {tailor.services.length === 0 ? (
     <p className="mt-4 text-gray-500">
-      No services added yet.
+      <T en="No services added yet." hi="अभी कोई सेवा नहीं जोड़ी गई है।" />
     </p>
   ) : (
     <div className="mt-6 space-y-4">
@@ -167,10 +168,10 @@ export default async function TailorProfilePage({ params }: Props) {
       {tailor.workPhotos.length > 0 && (
         <section className="mx-auto mt-16 max-w-6xl">
           <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">
-            Portfolio
+            <T en="Portfolio" hi="कार्य संग्रह" />
           </p>
           <h2 className="mt-1 text-3xl font-bold text-gray-900">
-            Work and designs
+            <T en="Work and designs" hi="काम और डिज़ाइन" />
           </h2>
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {tailor.workPhotos.map((photo, index) => (

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type PhoneLoginProps = {
   onBack: () => void;
@@ -33,6 +34,8 @@ export default function PhoneLogin({
   onBack,
 }: PhoneLoginProps) {
   const router = useRouter();
+  const { language } = useLanguage();
+  const hi = language === "hi";
 
   const [phone, setPhone] =
     useState("");
@@ -226,22 +229,21 @@ export default function PhoneLogin({
           disabled={loading}
           className="text-sm font-semibold text-amber-700 hover:underline disabled:opacity-50"
         >
-          ← Back
+          ← {hi ? "वापस" : "Back"}
         </button>
 
         <h1 className="mt-5 text-3xl font-bold text-gray-900">
-          Login with Phone
+          {hi ? "फोन से लॉग इन करें" : "Login with Phone"}
         </h1>
 
         <p className="mt-2 text-gray-600">
-          Enter your registered phone number
-          and verify the OTP.
+          {hi ? "अपना पंजीकृत फोन नंबर दर्ज करें और OTP सत्यापित करें।" : "Enter your registered phone number and verify the OTP."}
         </p>
 
         <div className="mt-8 space-y-5">
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Phone Number
+              {hi ? "फोन नंबर" : "Phone Number"}
             </label>
 
             <div className="flex rounded-xl border border-gray-300 bg-white focus-within:border-amber-700 focus-within:ring-2 focus-within:ring-amber-200">
@@ -296,13 +298,13 @@ export default function PhoneLogin({
               className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading
-                ? "Sending OTP..."
-                : "Send OTP"}
+                ? (hi ? "OTP भेज रहे हैं..." : "Sending OTP...")
+                : (hi ? "OTP भेजें" : "Send OTP")}
             </button>
           ) : (
             <>
               <div className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
-                OTP was sent to{" "}
+                {hi ? "OTP भेजा गया:" : "OTP was sent to"}{" "}
                 <strong>{phone}</strong>.
 
                 <button
@@ -311,13 +313,13 @@ export default function PhoneLogin({
                   disabled={loading}
                   className="ml-2 font-semibold text-amber-700 underline disabled:opacity-50"
                 >
-                  Change
+                  {hi ? "बदलें" : "Change"}
                 </button>
               </div>
 
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  Verification Code
+                  {hi ? "सत्यापन कोड" : "Verification Code"}
                 </label>
 
                 <input
@@ -325,7 +327,7 @@ export default function PhoneLogin({
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   maxLength={6}
-                  placeholder="Enter 6-digit OTP"
+                  placeholder={hi ? "6 अंकों का OTP दर्ज करें" : "Enter 6-digit OTP"}
                   value={otp}
                   onChange={(event) => {
                     const value =

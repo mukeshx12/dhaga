@@ -19,7 +19,7 @@ export default function BookingForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleSubmit = async (
   e: React.FormEvent<HTMLFormElement>
@@ -95,7 +95,7 @@ export default function BookingForm({
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           className="w-full rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
-          placeholder="Enter the complete address for your measurement visit"
+          placeholder={language === "hi" ? "माप के लिए पूरा पता दर्ज करें" : "Enter the complete address for your measurement visit"}
         />
       </div>
 
@@ -109,7 +109,7 @@ export default function BookingForm({
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           className="w-full rounded-xl border border-gray-300 bg-white p-4 text-gray-900 placeholder:text-gray-400 focus:border-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-200"
-          placeholder="Garment type, preferred time or any special instructions"
+          placeholder={language === "hi" ? "परिधान का प्रकार, पसंदीदा समय या विशेष निर्देश" : "Garment type, preferred time or any special instructions"}
         />
       </div>
 

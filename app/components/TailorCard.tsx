@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, MapPin, Scissors } from "lucide-react";
+import T from "./LocalizedText";
 
 type TailorCardProps = {
   tailor: {
@@ -33,7 +34,7 @@ export default function TailorCard({ tailor }: TailorCardProps) {
         />
         {tailor.isVerified && (
           <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-blue-700 shadow-sm">
-            <BadgeCheck size={16} /> Verified
+            <BadgeCheck size={16} /> <T en="Verified" hi="सत्यापित" />
           </span>
         )}
       </div>
@@ -44,11 +45,11 @@ export default function TailorCard({ tailor }: TailorCardProps) {
           <MapPin size={17} className="shrink-0 text-amber-700" />
           <span className="truncate">{tailor.city}</span>
           <span aria-hidden="true">•</span>
-          <span className="whitespace-nowrap">{tailor.experience} yrs exp.</span>
+          <span className="whitespace-nowrap">{tailor.experience} <T en="yrs exp." hi="वर्ष अनुभव" /></span>
         </div>
 
         <p className="mt-4 line-clamp-2 min-h-12 text-sm leading-6 text-gray-600">
-          {tailor.description || "Professional tailoring and fitting services made for your style."}
+          {tailor.description || <T en="Professional tailoring and fitting services made for your style." hi="आपकी शैली के अनुसार पेशेवर सिलाई और फिटिंग सेवाएं।" />}
         </p>
 
         <div className="mt-4 flex min-h-8 flex-wrap gap-2">
@@ -62,13 +63,13 @@ export default function TailorCard({ tailor }: TailorCardProps) {
 
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-gray-100 pt-4 sm:pt-5">
           <div className="min-w-0">
-            <p className="text-xs text-gray-500">{startingPrice === null ? "Services" : "Services from"}</p>
+            <p className="text-xs text-gray-500">{startingPrice === null ? <T en="Services" hi="सेवाएं" /> : <T en="Services from" hi="सेवाएं शुरू" />}</p>
             <p className="max-w-28 text-xs font-semibold leading-4 text-amber-800 sm:max-w-36 sm:text-sm sm:leading-5">
-              {startingPrice === null ? "Services not listed yet" : `₹${startingPrice.toLocaleString("en-IN")}`}
+              {startingPrice === null ? <T en="Services not listed yet" hi="सेवाएं अभी सूचीबद्ध नहीं हैं" /> : `₹${startingPrice.toLocaleString("en-IN")}`}
             </p>
           </div>
           <Link href={`/tailors/${tailor.id}`} className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:min-h-11 sm:gap-2 sm:px-5 sm:py-2.5 sm:text-base">
-            View profile <ArrowRight size={16} />
+            <T en="View profile" hi="प्रोफ़ाइल देखें" /> <ArrowRight size={16} />
           </Link>
         </div>
       </div>

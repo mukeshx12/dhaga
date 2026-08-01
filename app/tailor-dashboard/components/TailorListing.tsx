@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ImagePlus, Trash2 } from "lucide-react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Listing = {
   shopName: string;
@@ -21,6 +22,8 @@ type Props = {
 };
 
 export default function TailorListing({ initialListing }: Props) {
+  const { language } = useLanguage();
+  const hi = language === "hi";
   const [form, setForm] = useState({
     shopName: initialListing.shopName,
     phone: initialListing.phone,
@@ -136,13 +139,13 @@ export default function TailorListing({ initialListing }: Props) {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wider text-amber-700">
-            Business listing
+            {hi ? "व्यवसाय सूची" : "Business listing"}
           </p>
           <h2 className="mt-1 text-2xl font-bold text-gray-900">
-            Your tailor profile
+            {hi ? "आपकी दर्जी प्रोफ़ाइल" : "Your tailor profile"}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            These details are shown to customers on your public listing.
+            {hi ? "ये विवरण ग्राहकों को आपकी सार्वजनिक सूची में दिखाई देंगे।" : "These details are shown to customers on your public listing."}
           </p>
         </div>
         <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${
@@ -150,7 +153,7 @@ export default function TailorListing({ initialListing }: Props) {
             ? "bg-green-100 text-green-700"
             : "bg-amber-100 text-amber-800"
         }`}>
-          {initialListing.isVerified ? "Verified" : "Verification pending"}
+          {initialListing.isVerified ? (hi ? "सत्यापित" : "Verified") : (hi ? "सत्यापन लंबित" : "Verification pending")}
         </span>
       </div>
 
@@ -167,10 +170,10 @@ export default function TailorListing({ initialListing }: Props) {
 
       <form onSubmit={saveListing} className="mt-6 grid gap-5 md:grid-cols-2">
         {[
-          ["shopName", "Shop name", "Priya Boutique"],
-          ["phone", "Business phone", "+91 9876543210"],
-          ["city", "City", "Bengaluru"],
-          ["experience", "Years of experience", "5"],
+          ["shopName", hi ? "दुकान का नाम" : "Shop name", "Priya Boutique"],
+          ["phone", hi ? "व्यवसाय फोन" : "Business phone", "+91 9876543210"],
+          ["city", hi ? "शहर" : "City", "Bengaluru"],
+          ["experience", hi ? "अनुभव के वर्ष" : "Years of experience", "5"],
         ].map(([name, label, placeholder]) => (
           <label key={name} className="text-sm font-medium text-gray-700">
             {label}
@@ -190,7 +193,7 @@ export default function TailorListing({ initialListing }: Props) {
         ))}
 
         <label className="text-sm font-medium text-gray-700 md:col-span-2">
-          Shop address
+          {hi ? "दुकान का पता" : "Shop address"}
           <input
             required
             name="address"
@@ -201,8 +204,8 @@ export default function TailorListing({ initialListing }: Props) {
         </label>
 
         <div className="md:col-span-2">
-          <p className="text-sm font-medium text-gray-700">Shop photo</p>
-          <p className="mt-1 text-xs text-gray-500">JPG, PNG or WebP, maximum 2 MB.</p>
+          <p className="text-sm font-medium text-gray-700">{hi ? "दुकान की फोटो" : "Shop photo"}</p>
+          <p className="mt-1 text-xs text-gray-500">{hi ? "JPG, PNG या WebP, अधिकतम 2 MB।" : "JPG, PNG or WebP, maximum 2 MB."}</p>
 
           <div className="mt-3 flex flex-wrap items-start gap-4">
             {form.shopPhoto && (
@@ -228,7 +231,7 @@ export default function TailorListing({ initialListing }: Props) {
             <label className="flex h-40 w-56 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 text-center text-amber-800 hover:bg-amber-100">
               <ImagePlus size={28} />
               <span className="mt-2 text-sm font-semibold">
-                {form.shopPhoto ? "Replace shop photo" : "Upload shop photo"}
+                {form.shopPhoto ? (hi ? "दुकान की फोटो बदलें" : "Replace shop photo") : (hi ? "दुकान की फोटो अपलोड करें" : "Upload shop photo")}
               </span>
               <input
                 type="file"
@@ -241,8 +244,8 @@ export default function TailorListing({ initialListing }: Props) {
         </div>
 
         <div className="md:col-span-2">
-          <p className="text-sm font-medium text-gray-700">Work and design gallery</p>
-          <p className="mt-1 text-xs text-gray-500">Upload up to five examples, maximum 2 MB each.</p>
+          <p className="text-sm font-medium text-gray-700">{hi ? "काम और डिज़ाइन गैलरी" : "Work and design gallery"}</p>
+          <p className="mt-1 text-xs text-gray-500">{hi ? "अधिकतम पांच उदाहरण अपलोड करें, प्रत्येक अधिकतम 2 MB।" : "Upload up to five examples, maximum 2 MB each."}</p>
 
           <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {form.workPhotos.map((photo, index) => (
@@ -271,7 +274,7 @@ export default function TailorListing({ initialListing }: Props) {
             {form.workPhotos.length < 5 && (
               <label className="flex h-44 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 text-center text-amber-800 hover:bg-amber-100">
                 <ImagePlus size={28} />
-                <span className="mt-2 text-sm font-semibold">Add work photos</span>
+                <span className="mt-2 text-sm font-semibold">{hi ? "काम की फोटो जोड़ें" : "Add work photos"}</span>
                 <input
                   type="file"
                   multiple
@@ -285,7 +288,7 @@ export default function TailorListing({ initialListing }: Props) {
         </div>
 
         <label className="text-sm font-medium text-gray-700 md:col-span-2">
-          About your work
+          {hi ? "आपके काम के बारे में" : "About your work"}
           <textarea
             name="description"
             rows={4}
@@ -300,7 +303,7 @@ export default function TailorListing({ initialListing }: Props) {
           disabled={saving}
           className="w-fit rounded-xl bg-amber-700 px-6 py-3 font-semibold text-white hover:bg-amber-800 disabled:opacity-50 md:col-span-2"
         >
-          {saving ? "Saving..." : "Save listing"}
+          {saving ? (hi ? "सहेज रहे हैं..." : "Saving...") : (hi ? "सूची सहेजें" : "Save listing")}
         </button>
       </form>
     </section>

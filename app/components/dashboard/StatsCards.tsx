@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { CalendarDays, CircleCheckBig, Heart, PackageCheck } from "lucide-react";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
   bookingCount: number;
@@ -9,11 +12,13 @@ type Props = {
 };
 
 export default function StatsCards({ bookingCount, deliveredCount, activeCount, savedCount }: Props) {
+  const { language } = useLanguage();
+  const hi = language === "hi";
   const stats = [
-    { title: "Bookings", value: bookingCount, icon: CalendarDays, color: "bg-blue-100 text-blue-700", href: "#recent-bookings" },
-    { title: "Delivered orders", value: deliveredCount, icon: PackageCheck, color: "bg-green-100 text-green-700", href: "#recent-bookings" },
-    { title: "Active orders", value: activeCount, icon: CircleCheckBig, color: "bg-amber-100 text-amber-700", href: "#recent-bookings" },
-    { title: "Saved tailors", value: savedCount, icon: Heart, color: "bg-pink-100 text-pink-700", href: "#saved-tailors" },
+    { title: hi ? "बुकिंग" : "Bookings", value: bookingCount, icon: CalendarDays, color: "bg-blue-100 text-blue-700", href: "#recent-bookings" },
+    { title: hi ? "डिलीवर ऑर्डर" : "Delivered orders", value: deliveredCount, icon: PackageCheck, color: "bg-green-100 text-green-700", href: "#recent-bookings" },
+    { title: hi ? "सक्रिय ऑर्डर" : "Active orders", value: activeCount, icon: CircleCheckBig, color: "bg-amber-100 text-amber-700", href: "#recent-bookings" },
+    { title: hi ? "सहेजे गए दर्जी" : "Saved tailors", value: savedCount, icon: Heart, color: "bg-pink-100 text-pink-700", href: "#saved-tailors" },
   ];
 
   return (

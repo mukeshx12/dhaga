@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import T from "@/app/components/LocalizedText";
 
 type EmailLoginProps = {
   onBack: () => void;
@@ -99,15 +100,15 @@ export default function EmailLogin({
           disabled={loading}
           className="text-sm font-semibold text-amber-700 hover:underline disabled:opacity-50"
         >
-          ← Back
+          ← <T en="Back" hi="वापस" />
         </button>
 
         <h1 className="mt-5 text-3xl font-bold text-gray-900">
-          Login with Email
+          <T en="Login with Email" hi="ईमेल से लॉग इन करें" />
         </h1>
 
         <p className="mt-2 text-gray-600">
-          Enter your registered email address and password.
+          <T en="Enter your registered email address and password." hi="अपना पंजीकृत ईमेल और पासवर्ड दर्ज करें।" />
         </p>
 
         <form
@@ -116,7 +117,7 @@ export default function EmailLogin({
         >
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Email Address
+              <T en="Email Address" hi="ईमेल पता" />
             </label>
 
             <input
@@ -136,7 +137,7 @@ export default function EmailLogin({
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Password
+              <T en="Password" hi="पासवर्ड" />
             </label>
 
             <input
@@ -165,19 +166,17 @@ export default function EmailLogin({
             disabled={loading}
             className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {loading
-              ? "Logging in..."
-              : "Login with Email"}
+            {loading ? <T en="Logging in..." hi="लॉग इन हो रहा है..." /> : <T en="Login with Email" hi="ईमेल से लॉग इन करें" />}
           </button>
         </form>
 
         <p className="mt-7 text-center text-sm text-gray-600">
-          Don&apos;t have an account?{" "}
+          <T en="Don’t have an account?" hi="खाता नहीं है?" />{" "}
           <a
             href="/register"
             className="font-semibold text-amber-700 hover:underline"
           >
-            Register
+            <T en="Register" hi="पंजीकरण करें" />
           </a>
         </p>
       </div>

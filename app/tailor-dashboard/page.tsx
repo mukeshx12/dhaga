@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import TailorDashboardTabs from "@/app/tailor-dashboard/components/TailorDashboardTabs";
+import T from "@/app/components/LocalizedText";
 
 export const dynamic = "force-dynamic";
 
@@ -37,11 +38,11 @@ export default async function TailorDashboardPage() {
       <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8">
 
         <h1 className="font-semibold text-black text-4xl">
-          Welcome Back 👋
+          <T en="Welcome Back" hi="फिर से स्वागत है" /> 👋
         </h1>
 
         <p className="mt-2 text-gray-600">
-          Manage your tailoring business and customer bookings.
+          <T en="Manage your tailoring business and customer bookings." hi="अपने सिलाई व्यवसाय और ग्राहक बुकिंग को संभालें।" />
         </p>
 
         <TailorDashboardTabs initialListing={listing} />

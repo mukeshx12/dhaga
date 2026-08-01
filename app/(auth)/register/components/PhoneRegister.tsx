@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
   onBack: () => void;
@@ -23,6 +24,8 @@ function formatIndianPhone(phone: string) {
 
 export default function PhoneRegister({ onBack }: Props) {
   const router = useRouter();
+  const { language } = useLanguage();
+  const hi = language === "hi";
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -128,21 +131,21 @@ export default function PhoneRegister({ onBack }: Props) {
           onClick={onBack}
           className="text-sm font-semibold text-amber-700 hover:underline"
         >
-          ← Back
+          ← {hi ? "वापस" : "Back"}
         </button>
 
         <h1 className="mt-5 text-3xl font-bold text-gray-900">
-          Register with Phone
+          {hi ? "फोन से पंजीकरण करें" : "Register with Phone"}
         </h1>
 
         <p className="mt-2 text-gray-600">
-          We will send a one-time password to verify your number.
+          {hi ? "आपका नंबर सत्यापित करने के लिए हम एक OTP भेजेंगे।" : "We will send a one-time password to verify your number."}
         </p>
 
         <div className="mt-8 space-y-5">
           <input
             type="text"
-            placeholder="Full Name"
+            placeholder={hi ? "पूरा नाम" : "Full Name"}
             value={name}
             onChange={(event) => setName(event.target.value)}
             disabled={otpSent}
@@ -151,7 +154,7 @@ export default function PhoneRegister({ onBack }: Props) {
 
           <div>
             <label className="mb-2 block text-sm font-semibold text-gray-700">
-              Phone Number
+              {hi ? "फोन नंबर" : "Phone Number"}
             </label>
 
             <div className="flex rounded-xl border border-gray-300 bg-white focus-within:border-amber-700 focus-within:ring-2 focus-within:ring-amber-200">
@@ -181,18 +184,18 @@ export default function PhoneRegister({ onBack }: Props) {
               disabled={loading}
               className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? "Sending OTP..." : "Send OTP"}
+              {loading ? (hi ? "OTP भेज रहे हैं..." : "Sending OTP...") : (hi ? "OTP भेजें" : "Send OTP")}
             </button>
           ) : (
             <>
               <div className="rounded-xl bg-green-50 p-4 text-sm text-green-800">
-                OTP sent to {phone}.
+                {hi ? "OTP भेजा गया:" : "OTP sent to"} {phone}.
                 <button
                   type="button"
                   onClick={changePhoneNumber}
                   className="ml-2 font-semibold underline"
                 >
-                  Change
+                  {hi ? "बदलें" : "Change"}
                 </button>
               </div>
 
@@ -200,7 +203,7 @@ export default function PhoneRegister({ onBack }: Props) {
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder="Enter 6-digit OTP"
+                placeholder={hi ? "6 अंकों का OTP दर्ज करें" : "Enter 6-digit OTP"}
                 value={otp}
                 onChange={(event) =>
                   setOtp(event.target.value.replace(/\D/g, ""))
@@ -214,7 +217,7 @@ export default function PhoneRegister({ onBack }: Props) {
                 disabled={loading || otp.length < 4}
                 className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {loading ? "Verifying..." : "Verify & Create Account"}
+                {loading ? (hi ? "सत्यापन हो रहा है..." : "Verifying...") : (hi ? "सत्यापित करें और खाता बनाएं" : "Verify & Create Account")}
               </button>
 
               <button
@@ -223,19 +226,19 @@ export default function PhoneRegister({ onBack }: Props) {
                 disabled={loading}
                 className="w-full text-sm font-semibold text-amber-700 hover:underline disabled:opacity-50"
               >
-                Resend OTP
+                {hi ? "OTP दोबारा भेजें" : "Resend OTP"}
               </button>
             </>
           )}
         </div>
 
         <p className="mt-7 text-center text-sm text-gray-600">
-          Already registered?{" "}
+          {hi ? "पहले से पंजीकृत हैं?" : "Already registered?"}{" "}
           <a
             href="/login"
             className="font-semibold text-amber-700 hover:underline"
           >
-            Login
+            {hi ? "लॉग इन" : "Login"}
           </a>
         </p>
       </div>
