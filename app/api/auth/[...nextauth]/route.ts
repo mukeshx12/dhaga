@@ -106,6 +106,10 @@ export const authOptions: NextAuthOptions = {
           label: "OTP",
           type: "text",
         },
+        challenge: {
+          label: "OTP challenge",
+          type: "text",
+        },
       },
 
       async authorize(credentials) {
@@ -115,10 +119,11 @@ export const authOptions: NextAuthOptions = {
             .trim();
 
           const otp = credentials?.otp?.trim();
+          const challenge = credentials?.challenge?.trim();
 
-          if (!phone || !otp) {
+          if (!phone || !otp || !challenge) {
             throw new Error(
-              "Phone number and OTP are required."
+              "Phone number, OTP and verification challenge are required."
             );
           }
 
@@ -149,11 +154,12 @@ export const authOptions: NextAuthOptions = {
           }
 
           /*
-           * Verify OTP through Twilio.
+           * Verify the OTP through 2Factor.
            */
           const otpIsValid = await verifyOtp(
             phone,
-            otp
+            otp,
+            challenge
           );
 
           if (!otpIsValid) {

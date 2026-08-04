@@ -32,6 +32,7 @@ export default function PhoneRegister({ onBack }: Props) {
   const [otp, setOtp] = useState("");
 
   const [otpSent, setOtpSent] = useState(false);
+  const [challenge, setChallenge] = useState("");
   const [loading, setLoading] = useState(false);
 
   const sendOtp = async () => {
@@ -68,6 +69,7 @@ export default function PhoneRegister({ onBack }: Props) {
       }
 
       setPhone(formattedPhone);
+      setChallenge(data.challenge);
       setOtpSent(true);
       alert("OTP sent successfully.");
     } catch (error) {
@@ -98,6 +100,7 @@ export default function PhoneRegister({ onBack }: Props) {
           name: name.trim(),
           phone: formattedPhone,
           otp: otp.trim(),
+          challenge,
         }),
       });
 
@@ -120,6 +123,7 @@ export default function PhoneRegister({ onBack }: Props) {
 
   const changePhoneNumber = () => {
     setOtp("");
+    setChallenge("");
     setOtpSent(false);
   };
 
@@ -203,7 +207,7 @@ export default function PhoneRegister({ onBack }: Props) {
                 type="text"
                 inputMode="numeric"
                 maxLength={6}
-                placeholder={hi ? "6 अंकों का OTP दर्ज करें" : "Enter 6-digit OTP"}
+                placeholder={hi ? "4–6 अंकों का OTP दर्ज करें" : "Enter 4–6 digit OTP"}
                 value={otp}
                 onChange={(event) =>
                   setOtp(event.target.value.replace(/\D/g, ""))

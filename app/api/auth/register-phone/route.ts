@@ -21,11 +21,16 @@ export async function POST(req: NextRequest) {
         ? body.otp.trim()
         : "";
 
-    if (!name || !phone || !otp) {
+    const challenge =
+      typeof body.challenge === "string"
+        ? body.challenge.trim()
+        : "";
+
+    if (!name || !phone || !otp || !challenge) {
       return NextResponse.json(
         {
           success: false,
-          message: "Name, phone and OTP are required.",
+          message: "Name, phone, OTP and verification challenge are required.",
         },
         { status: 400 }
       );
@@ -58,7 +63,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isVerified = await verifyOtp(phone, otp);
+    const isVerified = await verifyOtp(phone, otp, challenge);
 
     if (!isVerified) {
       return NextResponse.json(

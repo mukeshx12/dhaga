@@ -16,6 +16,27 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Phone OTP configuration
+
+Dhaga uses [2Factor.in](https://2factor.in/) for Indian phone-number OTPs. Add
+these server-only environment variables locally and in Vercel:
+
+```env
+TWO_FACTOR_API_KEY="your-2factor-api-key"
+OTP_CHALLENGE_SECRET="a-long-random-secret"
+```
+
+`TWO_FACTOR_TEMPLATE_NAME` is optional. Set it only after creating and approving
+a named OTP template in 2Factor:
+
+```env
+TWO_FACTOR_TEMPLATE_NAME="DHAGA_LOGIN"
+```
+
+If `OTP_CHALLENGE_SECRET` is omitted, the server falls back to
+`NEXTAUTH_SECRET`. Never expose these values through variables prefixed with
+`NEXT_PUBLIC_`.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

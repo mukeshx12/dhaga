@@ -1,40 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
-import { twilioClient, verifyServiceSid } from "@/lib/otp/twilio";
+import { sendOtp } from "@/lib/otp/twoFactor";
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone } = await req.json();
+    const body = await req.json();
+    const phone =
+      typeof body.phone === "string"
+        ? body.phone.replace(/\s+/g, "").trim()
+        : "";
 
-    console.log("===== TWILIO DEBUG =====");
-    console.log("Phone:", phone);
-    console.log("Account SID:", process.env.TWILIO_ACCOUNT_SID);
-    console.log("Verify SID ENV:", process.env.TWILIO_VERIFY_SERVICE_SID);
-    console.log("verifyServiceSid:", verifyServiceSid);
-    console.log("Verify SID Length:", verifyServiceSid?.length);
+    if (!/^\+91\d{10}$/.test(phone)) {
+      return NextResponse.json(
+        { success: false, message: "Enter a valid Indian phone number." },
+        { status: 400 }
+      );
+    }
 
-    const verification = await twilioClient.verify.v2
-      .services(verifyServiceSid)
-      .verifications.create({
-        to: phone,
-        channel: "sms",
-      });
+    const { challenge } = await sendOtp(phone);
 
     return NextResponse.json({
       success: true,
-      status: verification.status,
+      challenge,
     });
-  } catch (error: any) {
-    console.error("FULL ERROR:");
-    console.error(error);
+  } catch (error) {
+    console.error(
+      "Send OTP error:",
+      error instanceof Error ? error.message : "Unknown provider error"
+    );
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message,
-        code: error.code,
-        stack: error.stack,
+        message: "Unable to send OTP right now. Please try again shortly.",
       },
-      { status: 500 }
+      { status: 502 }
     );
   }
 }

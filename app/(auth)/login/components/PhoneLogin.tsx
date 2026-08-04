@@ -46,6 +46,9 @@ export default function PhoneLogin({
   const [otpSent, setOtpSent] =
     useState(false);
 
+  const [challenge, setChallenge] =
+    useState("");
+
   const [loading, setLoading] =
     useState(false);
 
@@ -109,6 +112,7 @@ export default function PhoneLogin({
       }
 
       setPhone(formattedPhone);
+      setChallenge(data.challenge);
       setOtpSent(true);
 
       setMessage(
@@ -152,6 +156,7 @@ export default function PhoneLogin({
         {
           phone: formattedPhone,
           otp: otp.trim(),
+          challenge,
 
           /*
            * Keep redirect false so we can
@@ -215,6 +220,7 @@ export default function PhoneLogin({
 
   const changePhone = () => {
     setOtp("");
+    setChallenge("");
     setOtpSent(false);
     setError("");
     setMessage("");
@@ -327,7 +333,7 @@ export default function PhoneLogin({
                   inputMode="numeric"
                   autoComplete="one-time-code"
                   maxLength={6}
-                  placeholder={hi ? "6 अंकों का OTP दर्ज करें" : "Enter 6-digit OTP"}
+                  placeholder={hi ? "4–6 अंकों का OTP दर्ज करें" : "Enter 4–6 digit OTP"}
                   value={otp}
                   onChange={(event) => {
                     const value =
@@ -349,7 +355,7 @@ export default function PhoneLogin({
                 onClick={loginWithOtp}
                 disabled={
                   loading ||
-                  otp.length !== 6
+                  otp.length < 4
                 }
                 className="w-full rounded-xl bg-amber-700 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
               >

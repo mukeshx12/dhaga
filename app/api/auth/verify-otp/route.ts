@@ -1,39 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { twilioClient, verifyServiceSid } from "@/lib/otp/twilio";
+import { verifyOtp } from "@/lib/otp/verifyOtp";
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, otp } = await req.json();
+    const { phone, otp, challenge } = await req.json();
 
-    if (!phone || !otp) {
+    if (!phone || !otp || !challenge) {
       return NextResponse.json(
         {
           success: false,
-          message: "Phone and OTP are required",
+          message: "Phone, OTP and challenge are required",
         },
         { status: 400 }
       );
     }
 
-    const verificationCheck = await twilioClient.verify.v2
-      .services(verifyServiceSid)
-      .verificationChecks.create({
-        to: phone,
-        code: otp,
-      });
+    const approved = await verifyOtp(phone, otp, challenge);
 
     return NextResponse.json({
-      success: verificationCheck.status === "approved",
-      status: verificationCheck.status,
+      success: approved,
+      status: approved ? "approved" : "denied",
     });
-
-  } catch (error: any) {
-    console.error(error);
+  } catch (error) {
+    console.error("Verify OTP route error:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: error.message,
+        message: "Unable to verify OTP.",
       },
       { status: 500 }
     );
