@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   LoaderCircle,
@@ -38,8 +38,16 @@ export default function TailorsClient({ initialTailors }: Props) {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const initialLoad = useRef(true);
 
   useEffect(() => {
+    // The server already supplied the initial result set. Avoid immediately
+    // downloading the same records (and large portfolio images) a second time.
+    if (initialLoad.current) {
+      initialLoad.current = false;
+      return;
+    }
+
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
       setLoading(true);
@@ -176,12 +184,15 @@ export default function TailorsClient({ initialTailors }: Props) {
           {loading && <LoaderCircle className="animate-spin text-amber-700" aria-label={hi ? "दर्जी लोड हो रहे हैं" : "Loading tailors"} />}
         </div>
 
-        {error ? (
+        {tailors.length > 0 ? (
+          <>
+            {error && <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-center text-sm font-medium text-amber-900">{error}</div>}
+            <div className={`mt-7 grid gap-6 transition-opacity md:grid-cols-2 xl:grid-cols-3 ${loading ? "opacity-60" : "opacity-100"}`}>
+              {tailors.map((tailor) => <TailorCard key={tailor.id} tailor={tailor} />)}
+            </div>
+          </>
+        ) : error ? (
           <div className="mt-8 rounded-2xl border border-red-200 bg-red-50 p-8 text-center font-medium text-red-700">{error}</div>
-        ) : tailors.length > 0 ? (
-          <div className={`mt-7 grid gap-6 transition-opacity md:grid-cols-2 xl:grid-cols-3 ${loading ? "opacity-60" : "opacity-100"}`}>
-            {tailors.map((tailor) => <TailorCard key={tailor.id} tailor={tailor} />)}
-          </div>
         ) : !loading ? (
           <div className="mt-8 rounded-3xl border border-amber-100 bg-white px-6 py-14 text-center shadow-sm">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-amber-800"><Search size={25} /></div>

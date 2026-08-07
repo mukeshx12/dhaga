@@ -55,14 +55,21 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) token.id = user.id;
       if (token.id) {
-        const current = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { name: true, email: true, phone: true, accountStatus: true },
-        });
-        token.accountActive = current?.accountStatus === "ACTIVE";
-        token.name = current?.name ?? null;
-        token.email = current?.email ?? null;
-        token.phone = current?.phone ?? null;
+        try {
+          const current = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: { name: true, email: true, phone: true, accountStatus: true },
+          });
+          token.accountActive = current?.accountStatus === "ACTIVE";
+          token.name = current?.name ?? null;
+          token.email = current?.email ?? null;
+          token.phone = current?.phone ?? null;
+        } catch (error) {
+          // Fail closed during a temporary database outage, but keep the
+          // NextAuth session endpoint returning valid JSON to the browser.
+          console.error("Unable to validate current account session:", error);
+          token.accountActive = false;
+        }
       }
       return token;
     },
