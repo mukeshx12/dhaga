@@ -8,24 +8,37 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
+  id String @id @default(cuid())
 
-  name          String?
-  email         String?        @unique
-  phone         String?        @unique
+  name  String?
+  email String? @unique
+  phone String? @unique
 
-  password      String?
+  password String?
 
   address       String?
-  role          UserRole       @default(CUSTOMER)
-  accountStatus AccountStatus  @default(ACTIVE)
+  role          UserRole      @default(CUSTOMER)
+  accountStatus AccountStatus @default(ACTIVE)
 
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  bookings      Booking[]      @relation("CustomerBookings")
-  savedTailors  SavedTailor[]
-  tailorProfile TailorProfile?
+  bookings            Booking[]            @relation("CustomerBookings")
+  savedTailors        SavedTailor[]
+  tailorProfile       TailorProfile?
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model TailorService {
@@ -47,8 +60,8 @@ model TailorProfile {
   address     String
   experience  Int
   description String?
-  shopPhoto    String?         @db.Text
-  workPhotos   String[]        @default([])
+  shopPhoto   String?         @db.Text
+  workPhotos  String[]        @default([])
   isVerified  Boolean         @default(false)
   status      TailorStatus    @default(PENDING)
   createdAt   DateTime        @default(now())

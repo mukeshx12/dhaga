@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import T from "@/app/components/LocalizedText";
 
 type EmailLoginProps = {
@@ -136,9 +137,14 @@ export default function EmailLogin({
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-gray-700">
-              <T en="Password" hi="पासवर्ड" />
-            </label>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <label className="block text-sm font-semibold text-gray-700">
+                <T en="Password" hi="पासवर्ड" />
+              </label>
+              <Link href="/forgot-password" className="text-sm font-semibold text-amber-700 hover:underline">
+                <T en="Forgot password?" hi="पासवर्ड भूल गए?" />
+              </Link>
+            </div>
 
             <input
               type="password"

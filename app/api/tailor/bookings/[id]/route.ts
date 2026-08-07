@@ -36,20 +36,6 @@ export async function PATCH(
       );
     }
 
-    const validStatuses = [
-  "PENDING",
-  "ACCEPTED",
-  "REJECTED",
-  "COMPLETED",
-];
-
-if (!validStatuses.includes(status)) {
-  return NextResponse.json(
-    { message: "Invalid status" },
-    { status: 400 }
-  );
-}
-
     // Find logged-in tailor
     const tailor = await prisma.tailorProfile.findUnique({
       where: {
@@ -76,6 +62,20 @@ if (!validStatuses.includes(status)) {
       return NextResponse.json(
         { message: "Booking not found" },
         { status: 404 }
+      );
+    }
+
+    const transitions: Record<string, string[]> = {
+      PENDING: ["ACCEPTED", "REJECTED"],
+      ACCEPTED: ["QUOTATION_SENT", "IN_PROGRESS", "CANCELLED"],
+      QUOTATION_SENT: ["CANCELLED"],
+      CONFIRMED: ["IN_PROGRESS", "CANCELLED"],
+      IN_PROGRESS: ["COMPLETED"],
+    };
+    if (!transitions[booking.status]?.includes(status)) {
+      return NextResponse.json(
+        { message: `Booking cannot move from ${booking.status} to ${status}.` },
+        { status: 409 }
       );
     }
 

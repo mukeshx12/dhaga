@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOtp } from "@/lib/otp/twoFactor";
+import { consumeOtpLimit } from "@/lib/otp/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,6 +14,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { success: false, message: "Enter a valid Indian phone number." },
         { status: 400 }
+      );
+    }
+
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+      || req.headers.get("x-real-ip")?.trim()
+      || "unknown";
+    if (!(await consumeOtpLimit(phone, ip))) {
+      return NextResponse.json(
+        { success: false, message: "Too many OTP requests. Please wait 10 minutes and try again." },
+        { status: 429, headers: { "Retry-After": "600" } }
       );
     }
 

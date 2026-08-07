@@ -14,9 +14,6 @@ export async function GET() {
       );
     }
 
-    console.log("Session User ID:", session.user.id);
-console.log("Session User Email:", session.user.email);
-
     const bookings = await prisma.booking.findMany({
   where: {
     customerId: session.user.id,
@@ -24,8 +21,10 @@ console.log("Session User Email:", session.user.email);
   include: {
     tailor: {
       select: {
+        id: true,
         shopName: true,
         city: true,
+        phone: true,
       },
     },
   },
@@ -95,30 +94,34 @@ if (!session?.user?.id) {
       );
     }
 
-     console.log(body);
+    const requestedDate = new Date(bookingDate);
+    if (Number.isNaN(requestedDate.getTime()) || requestedDate <= new Date()) {
+      return NextResponse.json({ message: "Please choose a future booking date." }, { status: 400 });
+    }
 
-    console.log({
-      tailorId,
-      bookingDate,
-      address,
-      notes,
+    const availableTailor = await prisma.tailorProfile.findFirst({
+      where: { id: tailorId, status: "VERIFIED", isVerified: true, user: { accountStatus: "ACTIVE" } },
+      select: { id: true },
     });
+    if (!availableTailor) {
+      return NextResponse.json({ message: "This tailor is not currently available for booking." }, { status: 404 });
+    }
 
-    const existingBooking = await prisma.booking.findFirst({
+    const activeBookingCount = await prisma.booking.count({
   where: {
     customerId: session.user.id,
     tailorId,
     status: {
-      in: ["PENDING", "ACCEPTED"],
+      in: ["PENDING", "ACCEPTED", "QUOTATION_SENT", "CONFIRMED", "IN_PROGRESS"],
     },
   },
 });
 
-if (existingBooking) {
+if (activeBookingCount >= 3) {
   return NextResponse.json(
     {
       message:
-        "You already have an active booking with this tailor.",
+        "You can have up to 3 active bookings with this tailor.",
     },
     {
       status: 400,
@@ -130,7 +133,7 @@ if (existingBooking) {
       data: {
         customerId: session.user.id,
         tailorId,
-        bookingDate: new Date(bookingDate),
+        bookingDate: requestedDate,
         address,
         notes,
       },

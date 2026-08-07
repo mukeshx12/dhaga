@@ -9,7 +9,6 @@ import Services from "./components/Services";
 import WhyChoose from "./components/WhyChoose";
 import FeaturedTailors from "./components/FeaturedTailors";
 import HowItWorks from "./components/HowItWorks";
-import Testimonials from "./components/Testimonials";
 import BecomeTailor from "./components/BecomeTailor";
 import Stats from "./components/Stats";
 import Contact from "./components/Contact";
@@ -21,6 +20,8 @@ export default async function Home() {
   const tailors = await prisma.tailorProfile.findMany({
     where: {
       isVerified: true,
+      status: "VERIFIED",
+      user: { accountStatus: "ACTIVE" },
     },
     include: {
       user: true,
@@ -75,8 +76,6 @@ export default async function Home() {
       <FeaturedTailors tailors={serializedTailors} />
 
       <HowItWorks />
-
-      <Testimonials />
 
       <BecomeTailor />
 

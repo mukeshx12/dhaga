@@ -9,7 +9,6 @@ export async function GET(req: NextRequest) {
     const city = (searchParams.get("city") || "").trim();
     const service = (searchParams.get("service") || "").trim();
     const sort = searchParams.get("sort") || "newest";
-    const verified = searchParams.get("verified") === "true";
 
     const orderBy =
       sort === "experience_desc"
@@ -22,7 +21,9 @@ export async function GET(req: NextRequest) {
 
     const tailors = await prisma.tailorProfile.findMany({
       where: {
-        status: { notIn: ["SUSPENDED", "REJECTED"] },
+        status: "VERIFIED",
+        isVerified: true,
+        user: { accountStatus: "ACTIVE" },
     ...(search
       ? {
           shopName: {
@@ -54,11 +55,6 @@ export async function GET(req: NextRequest) {
         }
       : {}),
 
-    ...(verified
-      ? {
-          isVerified: true,
-        }
-      : {}),
   },
 
   select: {

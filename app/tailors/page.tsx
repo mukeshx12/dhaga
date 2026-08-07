@@ -18,7 +18,8 @@ export default async function TailorsPage({
 
   const tailors = await prisma.tailorProfile.findMany({
     where: {
-      status: { notIn: ["SUSPENDED", "REJECTED"] },
+      status: "VERIFIED",
+      isVerified: true,
       ...(city
         ? {
             city: {

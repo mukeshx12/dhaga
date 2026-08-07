@@ -30,7 +30,7 @@ const [quotationNotes, setQuotationNotes] = useState("");
 
   async function updateBookingStatus(
   bookingId: string,
-  status: "ACCEPTED" | "REJECTED" | "COMPLETED"
+  status: "ACCEPTED" | "REJECTED" | "IN_PROGRESS" | "COMPLETED"
   )  
   {
   try {
@@ -321,13 +321,21 @@ async function sendQuotation(
       {booking.status === "CONFIRMED" && (
   <button
     onClick={() =>
-      updateBookingStatus(booking.id, "COMPLETED")
+      updateBookingStatus(booking.id, "IN_PROGRESS")
     }
     className="rounded-xl bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
   >
-    {hi ? "पूरा हुआ चिह्नित करें" : "Mark as Completed"}
+    {hi ? "काम शुरू करें" : "Start Work"}
   </button>
 )}
+      {booking.status === "IN_PROGRESS" && (
+        <button
+          onClick={() => updateBookingStatus(booking.id, "COMPLETED")}
+          className="rounded-xl bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
+        >
+          {hi ? "पूरा हुआ चिह्नित करें" : "Mark as Completed"}
+        </button>
+      )}
        </div>
 
       </div>

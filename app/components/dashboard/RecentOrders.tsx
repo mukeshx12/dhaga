@@ -13,7 +13,7 @@ type Booking = {
   status: BookingStatus;
   quotationPrice?: string | null;
   quotationNotes?: string | null;
-  tailor: { id: string; shopName: string; city: string; phone: string };
+  tailor: { id: string; shopName: string; city: string; phone: string | null };
 };
 
 const statusStyles: Record<BookingStatus, string> = {
@@ -88,20 +88,22 @@ export default function RecentOrders() {
             </span>
           </div>
 
-          <div className="mt-4 flex flex-col gap-3 rounded-xl border border-green-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("tailorContact")}</p>
-              <a href={`tel:${booking.tailor.phone}`} className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-900 hover:text-amber-700"><Phone size={16} />{booking.tailor.phone}</a>
+          {booking.tailor.phone && (
+            <div className="mt-4 flex flex-col gap-3 rounded-xl border border-green-100 bg-white p-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("tailorContact")}</p>
+                <a href={`tel:${booking.tailor.phone}`} className="mt-1 inline-flex items-center gap-1.5 text-sm font-semibold text-gray-900 hover:text-amber-700"><Phone size={16} />{booking.tailor.phone}</a>
+              </div>
+              <a
+                href={`https://wa.me/${booking.tailor.phone.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
+              >
+                <MessageCircle size={17} /> {t("chatWhatsApp")}
+              </a>
             </div>
-            <a
-              href={`https://wa.me/${booking.tailor.phone.replace(/\D/g, "")}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700"
-            >
-              <MessageCircle size={17} /> {t("chatWhatsApp")}
-            </a>
-          </div>
+          )}
 
           {booking.status === "QUOTATION_SENT" && booking.quotationPrice && (
             <div className="mt-5 rounded-xl border border-purple-200 bg-white p-4">

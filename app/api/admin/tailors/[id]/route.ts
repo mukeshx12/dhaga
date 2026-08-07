@@ -20,7 +20,15 @@ export async function PATCH(request: NextRequest, { params }: Context) {
 
   if (!data) return NextResponse.json({ message: "Invalid action" }, { status: 400 });
 
-  const tailor = await prisma.tailorProfile.update({ where: { id }, data });
+  const existing = await prisma.tailorProfile.findUnique({ where: { id }, select: { userId: true } });
+  if (!existing) return NextResponse.json({ message: "Tailor not found" }, { status: 404 });
+  const [, tailor] = await prisma.$transaction([
+    prisma.user.update({
+      where: { id: existing.userId },
+      data: { accountStatus: action === "SUSPEND" ? "SUSPENDED" : "ACTIVE" },
+    }),
+    prisma.tailorProfile.update({ where: { id }, data }),
+  ]);
   return NextResponse.json(tailor);
 }
 
@@ -29,6 +37,11 @@ export async function DELETE(_request: NextRequest, { params }: Context) {
   if (!admin) return NextResponse.json({ message: "Forbidden" }, { status: 403 });
 
   const { id } = await params;
-  await prisma.tailorProfile.delete({ where: { id } });
-  return NextResponse.json({ removed: true });
+  const existing = await prisma.tailorProfile.findUnique({ where: { id }, select: { userId: true } });
+  if (!existing) return NextResponse.json({ message: "Tailor not found" }, { status: 404 });
+  await prisma.$transaction([
+    prisma.user.update({ where: { id: existing.userId }, data: { accountStatus: "SUSPENDED" } }),
+    prisma.tailorProfile.update({ where: { id }, data: { status: "SUSPENDED", isVerified: false } }),
+  ]);
+  return NextResponse.json({ removed: false, archived: true });
 }

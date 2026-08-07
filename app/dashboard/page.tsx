@@ -4,7 +4,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 
 import DashboardHeader from "../components/dashboard/DashboardHeader";
@@ -45,11 +45,15 @@ export default async function DashboardPage({ searchParams }: DashboardProps) {
       select: { status: true },
     }),
     prisma.tailorProfile.findMany({
+      where: { status: "VERIFIED", isVerified: true, user: { accountStatus: "ACTIVE" } },
       orderBy: [{ isVerified: "desc" }, { createdAt: "desc" }],
       take: 30,
     }),
     prisma.savedTailor.findMany({
-      where: { userId: session.user.id },
+      where: {
+        userId: session.user.id,
+        tailor: { status: "VERIFIED", isVerified: true, user: { accountStatus: "ACTIVE" } },
+      },
       include: {
         tailor: {
           select: { id: true, shopName: true, city: true, shopPhoto: true },

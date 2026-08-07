@@ -63,6 +63,11 @@ export default function LoginChoice({
             {hi ? "खाता बनाएं" : "Create Account"}
           </a>
         </p>
+        <p className="mt-3 text-center text-sm">
+          <a href="/forgot-password" className="font-semibold text-amber-700 hover:underline">
+            {hi ? "लॉग इन करने में परेशानी?" : "Trouble signing in?"}
+          </a>
+        </p>
       </div>
     </main>
   );

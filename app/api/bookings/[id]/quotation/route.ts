@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
+import type { BookingStatus } from "@prisma/client";
 
 type Params = {
   params: Promise<{
@@ -48,14 +49,14 @@ export async function PATCH(
       );
     }
 
-    if (!booking.quotationPrice) {
+    if (!booking.quotationPrice || booking.status !== "QUOTATION_SENT") {
       return NextResponse.json(
         { message: "Quotation has not been sent yet." },
         { status: 400 }
       );
     }
 
-    let newStatus = booking.status;
+    let newStatus: BookingStatus = booking.status;
 
     if (action === "ACCEPT") {
       newStatus = "CONFIRMED";

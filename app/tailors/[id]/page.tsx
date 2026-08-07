@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { MapPin, BadgeCheck, Star } from "lucide-react";
+import { MapPin, BadgeCheck } from "lucide-react";
 import BookMeasurementButton from "./BookMeasurementButton";
 import SaveTailorButton from "./SaveTailorButton";
 import { getServerSession } from "next-auth";
@@ -20,8 +20,8 @@ export default async function TailorProfilePage({ params }: Props) {
   
   const { id } = await params;
 
-  const tailor = await prisma.tailorProfile.findUnique({
-    where: { id },
+  const tailor = await prisma.tailorProfile.findFirst({
+    where: { id, status: "VERIFIED", isVerified: true, user: { accountStatus: "ACTIVE" } },
     select: {
       id: true,
       shopName: true,
@@ -91,14 +91,6 @@ export default async function TailorProfilePage({ params }: Props) {
           <div className="mt-5 flex items-center gap-2 text-gray-700">
             <MapPin size={20} />
             <span>{tailor.city}</span>
-          </div>
-
-          <div className="mt-4 flex items-center gap-2 text-gray-700">
-            <Star
-              fill="#F59E0B"
-              className="text-yellow-500"
-            />
-            <span>4.8 (<T en="New Tailor" hi="नया दर्जी" />)</span>
           </div>
 
           <div className="mt-8 rounded-2xl border border-amber-100 bg-amber-50 p-6 text-gray-900">

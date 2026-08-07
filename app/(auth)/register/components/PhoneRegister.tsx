@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import type { AccountType } from "../page";
 
 type Props = {
+  accountType: AccountType;
   onBack: () => void;
 };
 
@@ -22,7 +25,7 @@ function formatIndianPhone(phone: string) {
   return cleaned;
 }
 
-export default function PhoneRegister({ onBack }: Props) {
+export default function PhoneRegister({ accountType, onBack }: Props) {
   const router = useRouter();
   const { language } = useLanguage();
   const hi = language === "hi";
@@ -91,28 +94,22 @@ export default function PhoneRegister({ onBack }: Props) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/auth/register-phone", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: name.trim(),
-          phone: formattedPhone,
-          otp: otp.trim(),
-          challenge,
-        }),
+      const result = await signIn("phone-otp", {
+        phone: formattedPhone,
+        otp: otp.trim(),
+        challenge,
+        action: "register",
+        name: name.trim(),
+        redirect: false,
       });
 
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        alert(data.message || "Registration failed.");
+      if (!result?.ok) {
+        alert(result?.error || "Registration failed.");
         return;
       }
 
-      alert("Phone account created successfully.");
-      router.push("/login");
+      router.replace(accountType === "tailor" ? "/become-tailor" : "/dashboard");
+      router.refresh();
     } catch (error) {
       console.error("Phone registration error:", error);
       alert("Something went wrong.");
@@ -139,7 +136,9 @@ export default function PhoneRegister({ onBack }: Props) {
         </button>
 
         <h1 className="mt-5 text-3xl font-bold text-gray-900">
-          {hi ? "फोन से पंजीकरण करें" : "Register with Phone"}
+          {accountType === "tailor"
+            ? (hi ? "दर्जी के रूप में पंजीकरण करें" : "Register as a Tailor")
+            : (hi ? "फोन से पंजीकरण करें" : "Register with Phone")}
         </h1>
 
         <p className="mt-2 text-gray-600">

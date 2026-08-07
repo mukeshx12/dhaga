@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
+import { verifyOtp } from "@/lib/otp/verifyOtp";
 
 export async function GET() {
   try {
@@ -56,13 +57,29 @@ export async function PATCH(req: NextRequest) {
 
     const body = await req.json();
 
+    const currentUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { phone: true },
+    });
+    if (!currentUser) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+
+    const requestedPhone = typeof body.phone === "string" ? body.phone.replace(/\s+/g, "").trim() : null;
+    if (requestedPhone && requestedPhone !== currentUser.phone) {
+      if (!/^\+91\d{10}$/.test(requestedPhone)) {
+        return NextResponse.json({ message: "Enter a valid Indian phone number." }, { status: 400 });
+      }
+      if (!body.otp || !body.challenge || !(await verifyOtp(requestedPhone, String(body.otp), String(body.challenge)))) {
+        return NextResponse.json({ message: "Verify the new phone number with OTP before saving." }, { status: 400 });
+      }
+    }
+
     const user = await prisma.user.update({
       where: {
         id: session.user.id,
       },
       data: {
         name: body.name,
-        phone: body.phone,
+        phone: requestedPhone,
         address: body.address,
       },
     });

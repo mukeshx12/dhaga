@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, MessageCircle, Phone, X } from "lucide-react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
 
-type Props = { tailor: { shopName: string; phone: string } | null };
+type Props = { tailor: { shopName: string; phone: string | null } | null };
 
 export default function BookingSuccessToast({ tailor }: Props) {
   const [visible, setVisible] = useState(true);
   const { t } = useLanguage();
-  const whatsappNumber = tailor?.phone.replace(/\D/g, "") ?? "";
+  const whatsappNumber = tailor?.phone?.replace(/\D/g, "") ?? "";
 
   useEffect(() => {
     const timer = window.setTimeout(() => setVisible(false), 7000);
@@ -24,7 +24,7 @@ export default function BookingSuccessToast({ tailor }: Props) {
       <div>
         <p className="font-semibold">{t("bookingSuccess")}</p>
         <p className="mt-1 text-sm text-gray-600">{t("bookingVisible")}</p>
-        {tailor && (
+        {tailor?.phone && (
           <div className="mt-3 border-t border-green-100 pt-3">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">{t("tailorContact")}</p>
             <p className="mt-1 text-sm font-semibold text-gray-900">{tailor.shopName} · {tailor.phone}</p>

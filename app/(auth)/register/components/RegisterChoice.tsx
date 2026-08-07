@@ -1,13 +1,18 @@
 "use client";
 
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import type { AccountType } from "../page";
 
 type Props = {
+  accountType: AccountType;
+  onBack: () => void;
   onChoosePhone: () => void;
   onChooseEmail: () => void;
 };
 
 export default function RegisterChoice({
+  accountType,
+  onBack,
   onChoosePhone,
   onChooseEmail,
 }: Props) {
@@ -16,13 +21,22 @@ export default function RegisterChoice({
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#FAF7F2] px-5 py-10">
       <div className="w-full max-w-md rounded-3xl bg-white p-7 shadow-2xl sm:p-10">
+        <button
+          type="button"
+          onClick={onBack}
+          className="text-sm font-semibold text-amber-700 hover:underline"
+        >
+          ← {hi ? "वापस" : "Back"}
+        </button>
         <div className="text-center">
           <span className="rounded-full bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-700">
             {hi ? "Dhaga से जुड़ें" : "Join Dhaga"}
           </span>
 
           <h1 className="mt-6 text-3xl font-bold text-gray-900">
-            {hi ? "ग्राहक खाता बनाएं" : "Create Customer Account"}
+            {accountType === "tailor"
+              ? (hi ? "दर्जी के रूप में जुड़ें" : "Join as a Tailor")
+              : (hi ? "ग्राहक खाता बनाएं" : "Create Customer Account")}
           </h1>
 
           <p className="mt-3 text-gray-600">

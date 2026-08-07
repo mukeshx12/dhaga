@@ -28,6 +28,8 @@ export default function TailorServices() {
   }
 
   useEffect(() => {
+    // The request synchronizes this client view with the server-owned service list.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchServices();
   }, []);
 

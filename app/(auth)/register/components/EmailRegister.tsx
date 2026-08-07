@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import type { AccountType } from "../page";
 
 type Props = {
+  accountType: AccountType;
   onBack: () => void;
 };
 
-export default function EmailRegister({ onBack }: Props) {
+export default function EmailRegister({ accountType, onBack }: Props) {
   const router = useRouter();
   const { language } = useLanguage();
   const hi = language === "hi";
@@ -76,8 +79,19 @@ export default function EmailRegister({ onBack }: Props) {
         return;
       }
 
-      alert("Your customer account has been created successfully.");
-      router.push("/login");
+      const loginResult = await signIn("email-password", {
+        email: formData.email.toLowerCase().trim(),
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (!loginResult?.ok) {
+        router.push(accountType === "tailor" ? "/login?next=/become-tailor" : "/login");
+        return;
+      }
+
+      router.replace(accountType === "tailor" ? "/become-tailor" : "/dashboard");
+      router.refresh();
     } catch (error) {
       console.error("Email registration error:", error);
       alert("Something went wrong.");
@@ -98,11 +112,13 @@ export default function EmailRegister({ onBack }: Props) {
         </button>
 
         <h1 className="mt-5 text-3xl font-bold text-gray-900">
-          Register with Email
+          {accountType === "tailor" ? "Create Your Tailor Account" : "Register with Email"}
         </h1>
 
         <p className="mt-2 text-gray-600">
-          Create your customer account using email and password.
+          {accountType === "tailor"
+            ? "Create your login, then complete your tailor shop profile."
+            : "Create your customer account using email and password."}
         </p>
 
         <form

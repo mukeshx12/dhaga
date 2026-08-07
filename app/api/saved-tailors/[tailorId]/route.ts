@@ -26,8 +26,8 @@ export async function POST(_request: NextRequest, { params }: Context) {
   }
 
   const { tailorId } = await params;
-  const tailor = await prisma.tailorProfile.findUnique({
-    where: { id: tailorId },
+  const tailor = await prisma.tailorProfile.findFirst({
+    where: { id: tailorId, status: "VERIFIED", isVerified: true, user: { accountStatus: "ACTIVE" } },
     select: { id: true },
   });
 

@@ -12,8 +12,8 @@ type Props = {
 
 export default async function BookMeasurementPage({ params }: Props) {
   const { id } = await params;
-  const tailor = await prisma.tailorProfile.findUnique({
-    where: { id },
+  const tailor = await prisma.tailorProfile.findFirst({
+    where: { id, status: "VERIFIED", isVerified: true, user: { accountStatus: "ACTIVE" } },
     select: { id: true, shopName: true },
   });
 

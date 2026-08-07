@@ -37,6 +37,19 @@ If `OTP_CHALLENGE_SECRET` is omitted, the server falls back to
 `NEXTAUTH_SECRET`. Never expose these values through variables prefixed with
 `NEXT_PUBLIC_`.
 
+## Password reset email configuration
+
+Email/password accounts use Resend for single-use password reset links. Add:
+
+```env
+RESEND_API_KEY="re_your_api_key"
+PASSWORD_RESET_FROM_EMAIL="Dhaga <support@your-verified-domain.com>"
+APP_URL="https://your-production-domain.com"
+```
+
+The domain in `PASSWORD_RESET_FROM_EMAIL` must be verified in Resend. For local
+development, set `APP_URL="http://localhost:3000"`.
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
