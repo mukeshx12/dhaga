@@ -24,9 +24,9 @@ type Tailor = {
   services: Array<{ id: string; serviceName: string; price: number }>;
 };
 
-type Props = { initialTailors: Tailor[] };
+type Props = { initialTailors: Tailor[]; initialServiceFallback?: boolean };
 
-export default function TailorsClient({ initialTailors }: Props) {
+export default function TailorsClient({ initialTailors, initialServiceFallback = false }: Props) {
   const searchParams = useSearchParams();
   const { language } = useLanguage();
   const hi = language === "hi";
@@ -38,6 +38,7 @@ export default function TailorsClient({ initialTailors }: Props) {
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [serviceFallback, setServiceFallback] = useState(initialServiceFallback);
   const initialLoad = useRef(true);
 
   useEffect(() => {
@@ -68,6 +69,7 @@ export default function TailorsClient({ initialTailors }: Props) {
         if (!response.ok) throw new Error("Unable to load tailors");
         const data: unknown = await response.json();
         setTailors(Array.isArray(data) ? data : []);
+        setServiceFallback(response.headers.get("X-Dhaga-Service-Fallback") === "true");
       } catch (fetchError) {
         if (fetchError instanceof DOMException && fetchError.name === "AbortError") return;
         setError(hi ? "दर्जी अभी लोड नहीं हो सके। कृपया फिर प्रयास करें।" : "We could not load tailors right now. Please try again.");
@@ -89,6 +91,7 @@ export default function TailorsClient({ initialTailors }: Props) {
     setService("");
     setSort("newest");
     setVerifiedOnly(false);
+    setServiceFallback(false);
   };
 
   return (
@@ -183,6 +186,14 @@ export default function TailorsClient({ initialTailors }: Props) {
           </div>
           {loading && <LoaderCircle className="animate-spin text-amber-700" aria-label={hi ? "दर्जी लोड हो रहे हैं" : "Loading tailors"} />}
         </div>
+
+        {serviceFallback && service && !loading && (
+          <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-950">
+            {hi
+              ? `अभी किसी दर्जी ने “${service}” को अपनी सेवा में सूचीबद्ध नहीं किया है। उपलब्धता पूछने के लिए सत्यापित दर्जी दिखाए जा रहे हैं।`
+              : `No tailor has listed “${service}” yet. Showing verified tailors you can contact to ask about availability.`}
+          </div>
+        )}
 
         {tailors.length > 0 ? (
           <>

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { buildTailorServiceFilter } from "@/lib/service-search";
 
 export async function GET(req: NextRequest) {
   try {
@@ -19,7 +20,8 @@ export async function GET(req: NextRequest) {
             ? { shopName: "asc" as const }
             : { createdAt: "desc" as const };
 
-    const tailors = await prisma.tailorProfile.findMany({
+    const serviceFilter = buildTailorServiceFilter(service);
+    const queryTailors = (includeServiceFilter: boolean) => prisma.tailorProfile.findMany({
       where: {
         status: "VERIFIED",
         isVerified: true,
@@ -42,18 +44,7 @@ export async function GET(req: NextRequest) {
         }
       : {}),
 
-    ...(service
-      ? {
-          services: {
-            some: {
-              serviceName: {
-                contains: service,
-                mode: "insensitive",
-              },
-            },
-          },
-        }
-      : {}),
+    ...(includeServiceFilter && serviceFilter ? { services: serviceFilter } : {}),
 
   },
 
@@ -71,7 +62,11 @@ export async function GET(req: NextRequest) {
   orderBy,
 });
 
-    return NextResponse.json(
+    let tailors = await queryTailors(true);
+    const serviceFallback = Boolean(service && tailors.length === 0);
+    if (serviceFallback) tailors = await queryTailors(false);
+
+    const response = NextResponse.json(
       tailors.map((tailor) => ({
         ...tailor,
         services: tailor.services.map((tailorService) => ({
@@ -80,6 +75,8 @@ export async function GET(req: NextRequest) {
         })),
       })),
     );
+    response.headers.set("X-Dhaga-Service-Fallback", String(serviceFallback));
+    return response;
   } catch (error) {
     console.error("API ERROR:", error);
 

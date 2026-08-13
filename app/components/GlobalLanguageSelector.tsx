@@ -9,7 +9,7 @@ export default function GlobalLanguageSelector() {
   if (alreadyInHeader) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-[60] rounded-xl bg-white p-1 shadow-lg ring-1 ring-gray-200 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-24 right-4 z-[60] rounded-xl bg-white p-1 shadow-lg ring-1 ring-gray-200 sm:bottom-6 sm:right-6">
       <LanguageSelector compact />
     </div>
   );

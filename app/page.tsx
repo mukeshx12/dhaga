@@ -13,6 +13,7 @@ import BecomeTailor from "./components/BecomeTailor";
 import Stats from "./components/Stats";
 import Contact from "./components/Contact";
 import T from "./components/LocalizedText";
+import MobileAppHome from "./components/MobileAppHome";
 
 export const dynamic = "force-dynamic";
 
@@ -42,8 +43,14 @@ export default async function Home() {
   }));
 
   return (
-    <main className="min-h-screen bg-[#FAF7F2] pt-20">
-      <Navbar />
+    <main className="min-h-screen bg-[#FAF7F2] md:pt-20">
+      <Navbar hideOnMobile />
+
+      <div className="md:hidden">
+        <MobileAppHome tailors={serializedTailors} />
+      </div>
+
+      <div className="hidden md:block">
 
       <Hero />
 
@@ -51,10 +58,10 @@ export default async function Home() {
 
       {/* CTA Buttons */}
       
-      <div className="mx-auto mb-14 mt-6 flex max-w-xl flex-col gap-3 px-5 sm:max-w-none sm:flex-row sm:justify-center sm:px-6">
+      <div className="mx-auto mb-12 mt-4 flex max-w-xl flex-col gap-3 px-5 sm:max-w-none sm:flex-row sm:justify-center sm:px-6">
         <Link
           href="/tailors"
-          className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-6 py-3.5 text-center text-base font-semibold text-white shadow-sm transition hover:bg-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56 sm:text-lg"
+          className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-6 py-3 text-center text-base font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-800 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56"
         >
           <CalendarCheck aria-hidden="true" size={21} />
           <T en="Book Measurement" hi="माप बुक करें" />
@@ -62,7 +69,7 @@ export default async function Home() {
  
         <Link
           href="/tailors"
-          className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-xl border-2 border-amber-700 bg-white px-6 py-3.5 text-center text-base font-semibold text-amber-700 transition hover:bg-amber-700 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56 sm:text-lg"
+          className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-xl border border-amber-700 bg-white px-6 py-3 text-center text-base font-semibold text-amber-800 shadow-sm transition hover:-translate-y-0.5 hover:bg-amber-50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2 sm:w-auto sm:min-w-56"
         >
           <Search aria-hidden="true" size={21} />
           <T en="Browse Tailors" hi="दर्जी खोजें" />
@@ -79,9 +86,13 @@ export default async function Home() {
 
       <BecomeTailor />
 
+      </div>
+
       <Stats />
 
-      <Contact />
+      <div className="hidden md:block">
+        <Contact />
+      </div>
     </main>
   );
 }

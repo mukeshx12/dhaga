@@ -13,7 +13,7 @@ const services = [
   {
     title: "Blouse Stitching",
     titleHi: "ब्लाउज़ सिलाई",
-    search: "Blouse Stitching",
+    search: "Blouse",
     icon: Shirt,
     desc: "Designer & bridal blouse stitching.",
     descHi: "डिज़ाइनर और ब्राइडल ब्लाउज़ सिलाई।",
@@ -21,7 +21,7 @@ const services = [
   {
     title: "Suit Stitching",
     titleHi: "सूट सिलाई",
-    search: "Suit Extra Design",
+    search: "Suit",
     icon: Sparkles,
     desc: "Custom salwar suit stitching.",
     descHi: "कस्टम सलवार सूट सिलाई।",
@@ -29,7 +29,7 @@ const services = [
   {
     title: "Lehenga Stitching",
     titleHi: "लहंगा सिलाई",
-    search: "Lehenga Stitching", // when you add it to DB
+    search: "Lehenga",
     icon: BadgeCheck,
     desc: "Wedding & festive lehengas.",
     descHi: "शादी और त्योहार के लहंगे।",
@@ -37,7 +37,7 @@ const services = [
   {
     title: "Alterations",
     titleHi: "कपड़ों में सुधार",
-    search: "Alterations",
+    search: "Alteration",
     icon: Scissors,
     desc: "Perfect fitting for existing dresses.",
     descHi: "मौजूदा कपड़ों की सही फिटिंग।",
@@ -45,7 +45,7 @@ const services = [
   {
     title: "Home Measurement",
     titleHi: "घर पर माप",
-    search: "Home Measurement",
+    search: "Home",
     icon: House,
     desc: "Book a tailor at your home.",
     descHi: "अपने घर पर दर्जी बुक करें।",
@@ -53,7 +53,7 @@ const services = [
   {
     title: "Fall & Pico",
     titleHi: "फॉल और पिको",
-    search: "Saare Fall",
+    search: "Fall",
     icon: Ruler,
     desc: "Quick saree finishing service.",
     descHi: "त्वरित साड़ी फिनिशिंग सेवा।",

@@ -13,13 +13,13 @@ export default function SearchBar() {
   const [service, setService] = useState("");
 
   return (
-    <section className="relative z-20 -mt-12">
+    <section className="relative z-20">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="rounded-3xl bg-white p-6 shadow-2xl">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
+        <div className="rounded-2xl border border-amber-100/80 bg-white/95 p-3 shadow-[0_14px_38px_rgba(120,53,15,.11)] backdrop-blur-sm sm:p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
             {/* City */}
-            <div className="flex flex-1 items-center gap-3 rounded-xl border p-4">
-              <MapPin className="h-6 w-6 text-amber-700" />
+            <div className="flex min-h-14 flex-1 items-center gap-3 rounded-xl border border-stone-200 bg-stone-50/70 px-4 transition focus-within:border-amber-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-100">
+              <MapPin className="h-5 w-5 shrink-0 text-amber-700" />
 
               <input
                 value={city}
@@ -31,8 +31,8 @@ export default function SearchBar() {
             </div>
 
             {/* Service */}
-            <div className="flex flex-1 items-center gap-3 rounded-xl border p-4">
-              <Search className="h-6 w-6 text-amber-700" />
+            <div className="flex min-h-14 flex-1 items-center gap-3 rounded-xl border border-stone-200 bg-stone-50/70 px-4 transition focus-within:border-amber-400 focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-100">
+              <Search className="h-5 w-5 shrink-0 text-amber-700" />
 
               <input
                 value={service}
@@ -62,7 +62,7 @@ export default function SearchBar() {
                   }`
                 );
               }}
-              className="rounded-xl bg-amber-700 px-10 py-4 text-white transition hover:bg-amber-800 w-full lg:w-auto"
+              className="min-h-14 w-full rounded-xl bg-amber-700 px-10 py-3 font-semibold text-white shadow-sm transition hover:bg-amber-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2 lg:w-auto"
             >
               {language === "hi" ? "खोजें" : "Search"}
             </button>

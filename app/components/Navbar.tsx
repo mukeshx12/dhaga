@@ -1,12 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, Scissors, X } from "lucide-react";
-import { useSession, signOut } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import {
+  Home,
+  LayoutDashboard,
+  LogIn,
+  LogOut,
+  Menu,
+  Route,
+  Scissors,
+  Store,
+  UserPlus,
+  UserRoundPlus,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import LanguageSelector from "./LanguageSelector";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
-
 
 type UserData = {
   id: string;
@@ -17,128 +30,139 @@ type UserData = {
   tailorId: string | null;
 };
 
-export default function Navbar() {
-  const { data: session } = useSession();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { t } = useLanguage();
+type NavId = "home" | "services" | "tailors" | "how-it-works";
 
+type NavItem = {
+  id: NavId;
+  href: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+export default function Navbar({ hideOnMobile = false }: { hideOnMobile?: boolean }) {
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const { language, t } = useLanguage();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<NavId>("home");
   const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
     async function fetchUser() {
       if (!session) return;
-
       const response = await fetch("/api/me");
-
       if (!response.ok) return;
-
-      const data = await response.json();
-
-      setUser(data);
+      setUser(await response.json());
     }
-
     fetchUser();
   }, [session]);
 
+  useEffect(() => {
+    const syncSection = () => {
+      if (window.location.hash === "#popular-services") setActiveSection("services");
+      else if (window.location.hash === "#how-it-works") setActiveSection("how-it-works");
+      else setActiveSection("home");
+    };
+    const timer = window.setTimeout(syncSection, 0);
+    window.addEventListener("hashchange", syncSection);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("hashchange", syncSection);
+    };
+  }, [pathname]);
+
+  const allNavItems: NavItem[] = [
+    { id: "home", href: "/", label: language === "hi" ? "होम" : "Home", icon: Home },
+    { id: "services", href: "/#popular-services", label: t("services"), icon: Scissors },
+    { id: "tailors", href: "/tailors", label: t("tailors"), icon: Store },
+    { id: "how-it-works", href: "/#how-it-works", label: t("howItWorks"), icon: Route },
+  ];
+  const navItems = user?.isTailor
+    ? allNavItems.filter((item) => item.id === "home" || item.id === "how-it-works")
+    : allNavItems;
+  const activeId: NavId | null = pathname.startsWith("/tailors") ? "tailors" : pathname === "/" ? activeSection : null;
+  const activeIndex = navItems.findIndex((item) => item.id === activeId);
+
+  const selectNav = (id: NavId) => {
+    setActiveSection(id);
+    setIsMenuOpen(false);
+  };
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
-          <Scissors className="text-amber-700" size={28} />
-          <h1 className="text-2xl font-bold text-amber-800">
-            Dhaga
-          </h1>
+    <nav className={`fixed inset-x-0 top-0 z-50 border-b border-stone-200/70 bg-[#FAF7F2]/88 shadow-[0_4px_24px_rgba(120,53,15,.05)] backdrop-blur-xl ${hideOnMobile ? "hidden md:block" : ""}`}>
+      <div className="mx-auto flex h-20 max-w-7xl items-center gap-4 px-5 lg:px-6">
+        <Link href="/" onClick={() => selectNav("home")} className="flex shrink-0 items-center gap-2 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-amber-700 text-white shadow-sm">
+            <Scissors aria-hidden="true" size={22} />
+          </span>
+          <span className="text-2xl font-extrabold tracking-tight text-amber-900">Dhaga</span>
         </Link>
 
-        {/* Navigation */}
-        <div className="hidden md:flex items-center gap-8 font-medium text-gray-700">
-          {!user?.isTailor && (
-            <>
-              <Link href="/#popular-services" className="hover:text-amber-700">
-                {t("services")}
-              </Link>
-
-              <Link href="/tailors" className="hover:text-amber-700">
-                {t("tailors")}
-              </Link>
-            </>
-          )}
-
-          <Link href="/#how-it-works"
-            className="text-gray-700 transition hover:text-amber-700">
-            {t("howItWorks")}
-          </Link>
-
-          <Link href="/#contact" className="hover:text-amber-700">
-            {t("contact")}
-          </Link>
+        <div className="hidden min-w-0 flex-1 justify-center xl:flex">
+          <div
+            className={`relative grid rounded-2xl bg-stone-200/70 p-1.5 ring-1 ring-stone-300/60 ${navItems.length <= 2 ? "min-w-[20rem]" : "min-w-[31rem]"}`}
+            style={{ gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))` }}
+            aria-label="Primary navigation"
+          >
+            <span
+              aria-hidden="true"
+              className={`absolute bottom-1.5 top-1.5 rounded-xl bg-white shadow-[0_3px_12px_rgba(120,53,15,.12)] ring-1 ring-black/[.04] transition-[transform,opacity] duration-300 ease-out ${activeIndex < 0 ? "opacity-0" : "opacity-100"}`}
+              style={{ width: `calc(100% / ${navItems.length})`, transform: `translateX(${Math.max(activeIndex, 0) * 100}%)` }}
+            />
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = item.id === activeId;
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  onClick={() => selectNav(item.id)}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative z-10 inline-flex min-h-10 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-3 text-sm font-semibold transition-colors duration-300 ${active ? "text-amber-800" : "text-stone-600 hover:text-stone-950"}`}
+                >
+                  <Icon aria-hidden="true" size={16} strokeWidth={active ? 2.4 : 2} />
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Right Side */}
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex shrink-0 items-center gap-2.5">
           <LanguageSelector compact />
           <button
             type="button"
-            onClick={() => setIsMenuOpen((prev) => !prev)}
-            aria-label="Toggle menu"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-gray-200 text-gray-700 transition hover:bg-gray-100 md:hidden"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-stone-200 bg-white text-stone-700 shadow-sm transition hover:border-amber-200 hover:text-amber-700 xl:hidden"
           >
-            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {isMenuOpen ? <X size={19} /> : <Menu size={19} />}
           </button>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden items-center gap-2 xl:flex">
             {!session ? (
               <>
-                <Link
-                  href="/login"
-                  className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
-                >
-                  {t("login")}
+                <Link href="/login" className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-amber-700 px-4 text-sm font-semibold text-amber-800 transition hover:bg-amber-50">
+                  <LogIn aria-hidden="true" size={16} /> {t("login")}
                 </Link>
-
-                <Link
-                  href="/register"
-                  className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
-                >
-                  {t("signUp")}
+                <Link href="/register" className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-amber-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-800">
+                  <UserPlus aria-hidden="true" size={16} /> {t("signUp")}
                 </Link>
               </>
             ) : (
               <>
-                {user?.isTailor ? (
-                  <>
-                    <Link
-                      href="/tailor-dashboard"
-                      className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
-                    >
-                      {t("tailorDashboard")}
-                    </Link>
-
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/dashboard"
-                      className="rounded-lg bg-amber-700 px-5 py-2 text-white hover:bg-amber-800"
-                    >
-                      {t("dashboard")}
-                    </Link>
-
-                    <Link
-                      href="/become-tailor"
-                      className="rounded-lg border border-amber-700 px-5 py-2 text-amber-700 hover:bg-amber-50"
-                    >
-                      {t("becomeTailor")}
-                    </Link>
-                  </>
+                <Link href={user?.isTailor ? "/tailor-dashboard" : "/dashboard"} className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-amber-700 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-amber-800">
+                  <LayoutDashboard aria-hidden="true" size={16} /> {user?.isTailor ? t("tailorDashboard") : t("dashboard")}
+                </Link>
+                {!user?.isTailor && (
+                  <Link href="/become-tailor" className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-amber-700 px-3 text-sm font-semibold text-amber-800 transition hover:bg-amber-50">
+                    <UserRoundPlus aria-hidden="true" size={16} /> {t("becomeTailor")}
+                  </Link>
                 )}
-
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="rounded-lg border border-red-500 px-5 py-2 text-red-600 hover:bg-red-50"
-                >
-                  {t("logout")}
+                <button onClick={() => signOut({ callbackUrl: "/" })} className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-red-200 bg-white px-3 text-sm font-semibold text-red-600 transition hover:bg-red-50">
+                  <LogOut aria-hidden="true" size={16} /> {t("logout")}
                 </button>
               </>
             )}
@@ -147,85 +171,34 @@ export default function Navbar() {
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden border-t border-gray-200 bg-[#FAF7F2] px-6 py-5 shadow-lg">
-          <div className="space-y-4">
-            <div className="flex flex-col gap-3 border-b border-gray-100 pb-4">
-              {!user?.isTailor && (
-                <>
-                  <Link href="/#popular-services" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                    {t("services")}
+        <div id="mobile-navigation" className="border-t border-stone-200/80 bg-[#FAF7F2]/98 px-5 py-4 shadow-lg backdrop-blur-xl xl:hidden">
+          <div className="mx-auto max-w-2xl">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const active = item.id === activeId;
+                return (
+                  <Link key={item.id} href={item.href} onClick={() => selectNav(item.id)} className={`flex items-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition ${active ? "bg-white text-amber-800 shadow-sm ring-1 ring-amber-100" : "text-stone-600 hover:bg-white/70 hover:text-stone-950"}`}>
+                    <Icon aria-hidden="true" size={17} /> {item.label}
                   </Link>
-                  <Link href="/tailors" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                    {t("tailors")}
-                  </Link>
-                </>
-              )}
-              <Link href="/#how-it-works" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                {t("howItWorks")}
-              </Link>
-              <Link href="/#contact" className="text-gray-700 hover:text-amber-700" onClick={() => setIsMenuOpen(false)}>
-                {t("contact")}
-              </Link>
+                );
+              })}
             </div>
 
-            {!session ? (
-              <div className="flex flex-col gap-3">
-                <Link
-                  href="/login"
-                  className="rounded-lg border border-amber-700 px-5 py-3 text-center text-amber-700 hover:bg-amber-50"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t("login")}
-                </Link>
-                <Link
-                  href="/register"
-                  className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t("signUp")}
-                </Link>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                {user?.isTailor ? (
-                  <>
-                    <Link
-                      href="/tailor-dashboard"
-                      className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {t("tailorDashboard")}
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/dashboard"
-                      className="rounded-lg bg-amber-700 px-5 py-3 text-center text-white hover:bg-amber-800"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {t("dashboard")}
-                    </Link>
-                    <Link
-                      href="/become-tailor"
-                      className="rounded-lg border border-amber-700 px-5 py-3 text-center text-amber-700 hover:bg-amber-50"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {t("becomeTailor")}
-                    </Link>
-                  </>
-                )}
-                <button
-                  onClick={() => {
-                    setIsMenuOpen(false);
-                    signOut({ callbackUrl: "/" });
-                  }}
-                  className="rounded-lg border border-red-500 px-5 py-3 text-center text-red-600 hover:bg-red-50"
-                >
-                  {t("logout")}
-                </button>
-              </div>
-            )}
+            <div className="mt-4 grid gap-2 border-t border-stone-200 pt-4 sm:grid-cols-3">
+              {!session ? (
+                <>
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="rounded-xl border border-amber-700 px-4 py-3 text-center text-sm font-semibold text-amber-800">{t("login")}</Link>
+                  <Link href="/register" onClick={() => setIsMenuOpen(false)} className="rounded-xl bg-amber-700 px-4 py-3 text-center text-sm font-semibold text-white">{t("signUp")}</Link>
+                </>
+              ) : (
+                <>
+                  <Link href={user?.isTailor ? "/tailor-dashboard" : "/dashboard"} onClick={() => setIsMenuOpen(false)} className="rounded-xl bg-amber-700 px-4 py-3 text-center text-sm font-semibold text-white">{user?.isTailor ? t("tailorDashboard") : t("dashboard")}</Link>
+                  {!user?.isTailor && <Link href="/become-tailor" onClick={() => setIsMenuOpen(false)} className="rounded-xl border border-amber-700 px-4 py-3 text-center text-sm font-semibold text-amber-800">{t("becomeTailor")}</Link>}
+                  <button onClick={() => { setIsMenuOpen(false); signOut({ callbackUrl: "/" }); }} className="rounded-xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-red-600">{t("logout")}</button>
+                </>
+              )}
+            </div>
           </div>
         </div>
       )}

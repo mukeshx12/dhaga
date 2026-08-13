@@ -5,7 +5,8 @@ import {
 } from "next-auth/react";
 import { LanguageProvider } from "./i18n/LanguageProvider";
 import type { Language } from "./i18n/config";
-import GlobalLanguageSelector from "./components/GlobalLanguageSelector";
+import MobileNativeBridge from "./components/MobileNativeBridge";
+import MobileBottomNav from "./components/MobileBottomNav";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -20,7 +21,8 @@ export default function Providers({
     <LanguageProvider initialLanguage={initialLanguage}>
       <SessionProvider>
         {children}
-        <GlobalLanguageSelector />
+        <MobileNativeBridge />
+        <MobileBottomNav />
       </SessionProvider>
     </LanguageProvider>
   );

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import TailorsClient from "./TailorsClient";
+import { buildTailorServiceFilter } from "@/lib/service-search";
 
 type Props = {
   searchParams: Promise<{
@@ -16,10 +17,12 @@ export default async function TailorsPage({
   const city = params.city;
   const service = params.service;
 
-  const tailors = await prisma.tailorProfile.findMany({
+  const serviceFilter = service ? buildTailorServiceFilter(service) : undefined;
+  const loadTailors = (includeServiceFilter: boolean) => prisma.tailorProfile.findMany({
     where: {
       status: "VERIFIED",
       isVerified: true,
+      user: { accountStatus: "ACTIVE" },
       ...(city
         ? {
             city: {
@@ -28,18 +31,7 @@ export default async function TailorsPage({
             },
           }
         : {}),
-      ...(service
-        ? {
-            services: {
-              some: {
-                serviceName: {
-                  contains: service,
-                  mode: "insensitive" as const,
-                },
-              },
-            },
-          }
-        : {}),
+      ...(includeServiceFilter && serviceFilter ? { services: serviceFilter } : {}),
     },
     select: {
       id: true,
@@ -54,6 +46,10 @@ export default async function TailorsPage({
     orderBy: { createdAt: "desc" },
   });
 
+  let tailors = await loadTailors(true);
+  const initialServiceFallback = Boolean(service && tailors.length === 0);
+  if (initialServiceFallback) tailors = await loadTailors(false);
+
   const serializedTailors = tailors.map((tailor) => ({
     ...tailor,
     services: tailor.services.map((tailorService) => ({
@@ -63,6 +59,6 @@ export default async function TailorsPage({
   }));
 
   return (
-    <TailorsClient initialTailors={serializedTailors} />
+    <TailorsClient initialTailors={serializedTailors} initialServiceFallback={initialServiceFallback} />
   );
 }
