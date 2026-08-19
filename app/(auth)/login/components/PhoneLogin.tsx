@@ -150,6 +150,11 @@ export default function PhoneLogin({
 
     setLoading(true);
 
+    const requestedCallback = new URLSearchParams(window.location.search).get("callbackUrl");
+    const callbackUrl = requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+      ? requestedCallback
+      : "/dashboard";
+
     try {
       const result = await signIn(
         "phone-otp",
@@ -202,7 +207,7 @@ export default function PhoneLogin({
        * Replace /dashboard if your customer
        * dashboard uses a different route.
        */
-      router.replace("/dashboard");
+      router.replace(callbackUrl);
       router.refresh();
     } catch (error) {
       console.error(

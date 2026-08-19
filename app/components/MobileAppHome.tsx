@@ -79,10 +79,8 @@ export default function MobileAppHome({ tailors }: { tailors: Tailor[] }) {
     const sevenDays = 7 * 24 * 60 * 60 * 1000;
     if (!session && Date.now() - dismissedAt > sevenDays) {
       const showTimer = window.setTimeout(() => setShowRolePrompt(true), 650);
-      const hideTimer = window.setTimeout(() => setShowRolePrompt(false), 12_000);
       return () => {
         window.clearTimeout(showTimer);
-        window.clearTimeout(hideTimer);
       };
     }
   }, [session]);
@@ -97,8 +95,8 @@ export default function MobileAppHome({ tailors }: { tailors: Tailor[] }) {
 
   const accountHref = useMemo(() => {
     if (!session) return "/login";
-    return user?.isTailor ? "/tailor-dashboard" : "/profile";
-  }, [session, user]);
+    return "/profile";
+  }, [session]);
 
   const scrollToTailor = useCallback((index: number) => {
     const carousel = tailorCarouselRef.current;
@@ -275,12 +273,12 @@ export default function MobileAppHome({ tailors }: { tailors: Tailor[] }) {
             </button>
           </div>
           <div className="mt-4 grid grid-cols-2 gap-3">
-            <Link href="/register" onClick={closeRolePrompt} className="rounded-2xl bg-amber-50 p-3 ring-1 ring-amber-100">
+            <Link href="/register?type=customer" onClick={closeRolePrompt} className="rounded-2xl bg-amber-50 p-3 ring-1 ring-amber-100">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-white text-amber-700 shadow-sm"><UserRound size={21} /></span>
               <span className="mt-2 block text-sm font-bold">{hi ? "मैं ग्राहक हूं" : "I’m a customer"}</span>
               <span className="mt-0.5 block text-[11px] text-slate-500">{hi ? "दर्जी खोजें और बुक करें" : "Find and book a tailor"}</span>
             </Link>
-            <Link href="/register" onClick={closeRolePrompt} className="rounded-2xl bg-slate-900 p-3 text-white">
+            <Link href="/register?type=tailor" onClick={closeRolePrompt} className="rounded-2xl bg-slate-900 p-3 text-white">
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-amber-300"><Scissors size={21} /></span>
               <span className="mt-2 block text-sm font-bold">{hi ? "मैं दर्जी हूं" : "I’m a tailor"}</span>
               <span className="mt-0.5 block text-[11px] text-slate-300">{hi ? "काम और ग्राहक पाएं" : "Get work and customers"}</span>
@@ -390,9 +388,9 @@ export default function MobileAppHome({ tailors }: { tailors: Tailor[] }) {
         <div className="mx-auto grid max-w-md grid-cols-5">
           {(user?.isTailor ? [
             { label: hi ? "होम" : "Home", href: "/", icon: Home, active: true },
-            { label: hi ? "अनुरोध" : "Requests", href: "/tailor-dashboard", icon: Clock3 },
+            { label: hi ? "अनुरोध" : "Requests", href: "/tailor-dashboard?section=requests", icon: Clock3 },
             { label: hi ? "कीमतें" : "Prices", href: "/tailor-dashboard/services", icon: Scissors },
-            { label: hi ? "दुकान" : "Shop", href: "/tailor-dashboard", icon: Store },
+            { label: hi ? "दुकान" : "Shop", href: "/tailor-dashboard?section=profile", icon: Store },
             { label: hi ? "अकाउंट" : "Account", href: accountHref, icon: UserRound },
           ] : [
             { label: hi ? "होम" : "Home", href: "/", icon: Home, active: true },

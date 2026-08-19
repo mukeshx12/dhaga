@@ -86,7 +86,7 @@ export default function EmailRegister({ accountType, onBack }: Props) {
       });
 
       if (!loginResult?.ok) {
-        router.push(accountType === "tailor" ? "/login?next=/become-tailor" : "/login");
+        router.push(accountType === "tailor" ? "/login?callbackUrl=/become-tailor" : "/login?callbackUrl=/dashboard");
         return;
       }
 

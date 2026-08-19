@@ -39,6 +39,11 @@ export default function EmailLogin({
 
     setLoading(true);
 
+    const requestedCallback = new URLSearchParams(window.location.search).get("callbackUrl");
+    const callbackUrl = requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+      ? requestedCallback
+      : "/dashboard";
+
     try {
       const result = await signIn(
         "email-password",
@@ -46,7 +51,7 @@ export default function EmailLogin({
           email: normalizedEmail,
           password,
           redirect: false,
-          callbackUrl: "/dashboard",
+          callbackUrl,
         }
       );
 
@@ -74,7 +79,7 @@ export default function EmailLogin({
       }
 
       router.replace(
-        result.url || "/dashboard"
+        result.url || callbackUrl
       );
 
       router.refresh();

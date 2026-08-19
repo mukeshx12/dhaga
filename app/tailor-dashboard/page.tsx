@@ -7,8 +7,13 @@ import T from "@/app/components/LocalizedText";
 
 export const dynamic = "force-dynamic";
 
-export default async function TailorDashboardPage() {
+type TailorDashboardPageProps = {
+  searchParams: Promise<{ section?: string }>;
+};
+
+export default async function TailorDashboardPage({ searchParams }: TailorDashboardPageProps) {
   const session = await getServerSession(authOptions);
+  const query = await searchParams;
 
   if (!session?.user?.id) {
     redirect("/login");
@@ -45,7 +50,10 @@ export default async function TailorDashboardPage() {
           <T en="Manage your tailoring business and customer bookings." hi="अपने सिलाई व्यवसाय और ग्राहक बुकिंग को संभालें।" />
         </p>
 
-        <TailorDashboardTabs initialListing={listing} />
+        <TailorDashboardTabs
+          initialListing={listing}
+          initialSection={query.section === "profile" || query.section === "services" ? query.section : "requests"}
+        />
 
       </div>
     </main>

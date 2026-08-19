@@ -9,6 +9,8 @@ const publicPages: MetadataRoute.Sitemap = [
   { url: `${siteUrl}/services`, changeFrequency: "monthly", priority: 0.7 },
   { url: `${siteUrl}/how-it-works`, changeFrequency: "monthly", priority: 0.6 },
   { url: `${siteUrl}/contact`, changeFrequency: "monthly", priority: 0.5 },
+  { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.4 },
+  { url: `${siteUrl}/account-deletion`, changeFrequency: "yearly", priority: 0.4 },
 ];
 
 export const revalidate = 3600;

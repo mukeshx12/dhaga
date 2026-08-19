@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { signOut } from "next-auth/react";
-import { LogOut } from "lucide-react";
 import LanguageSelector from "../LanguageSelector";
+import LogoutButton from "../LogoutButton";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
@@ -38,14 +37,7 @@ export default function DashboardHeader({ name, email }: Props) {
           </span>
         </Link>
 
-        <button
-          type="button"
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="inline-flex items-center gap-2 rounded-xl border border-red-200 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50"
-        >
-          <LogOut size={18} />
-          <span className="hidden sm:inline">{t("logout")}</span>
-        </button>
+        <LogoutButton className="px-3 sm:px-4" />
       </div>
     </header>
   );

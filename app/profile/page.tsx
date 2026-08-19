@@ -1,16 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ShieldCheck, Trash2 } from "lucide-react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import LogoutButton from "@/app/components/LogoutButton";
 
 type Profile = {
   name: string;
   email: string;
   phone: string;
   address: string;
+  isTailor: boolean;
 };
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { language } = useLanguage();
   const hi = language === "hi";
   const [profile, setProfile] = useState<Profile>({
@@ -18,6 +24,7 @@ export default function ProfilePage() {
     email: "",
     phone: "",
     address: "",
+    isTailor: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -28,6 +35,9 @@ export default function ProfilePage() {
       const response = await fetch("/api/profile");
 
       if (!response.ok) {
+        if (response.status === 401) {
+          router.replace("/login?callbackUrl=/profile");
+        }
         setLoading(false);
         return;
       }
@@ -39,13 +49,14 @@ export default function ProfilePage() {
        email: data.email ?? "",
        phone: data.phone ?? "",
        address: data.address ?? "",
+       isTailor: Boolean(data.isTailor),
        });
 
       setLoading(false);
     }
 
     fetchProfile();
-  }, []);
+  }, [router]);
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>
@@ -91,14 +102,17 @@ export default function ProfilePage() {
   <main className="min-h-screen bg-gray-50 py-12">
     <div className="mx-auto max-w-5xl px-6">
 
-      <div className="mb-10">
-        <h1 className="text-4xl font-bold text-gray-900">
-          {hi ? "मेरी प्रोफ़ाइल" : "My Profile"}
-        </h1>
+      <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900">
+            {hi ? "मेरी प्रोफ़ाइल" : "My Profile"}
+          </h1>
 
-        <p className="mt-2 text-gray-600">
-          {hi ? "अपनी व्यक्तिगत जानकारी संभालें और खाता अपडेट रखें।" : "Manage your personal information and keep your account up to date."}
-        </p>
+          <p className="mt-2 text-gray-600">
+            {hi ? "अपनी व्यक्तिगत जानकारी संभालें और खाता अपडेट रखें।" : "Manage your personal information and keep your account up to date."}
+          </p>
+        </div>
+        <LogoutButton className="w-full sm:w-auto" />
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -123,7 +137,7 @@ export default function ProfilePage() {
             </p>
 
             <span className="mt-5 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
-              {hi ? "ग्राहक" : "Customer"}
+              {profile.isTailor ? (hi ? "दर्जी" : "Tailor") : (hi ? "ग्राहक" : "Customer")}
             </span>
 
           </div>
@@ -252,6 +266,34 @@ export default function ProfilePage() {
         </div>
 
       </div>
+
+      <section className="mt-8 rounded-3xl border border-red-200 bg-white p-7 shadow-sm sm:p-8">
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-4">
+            <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-red-50 text-red-700">
+              <Trash2 size={21} aria-hidden="true" />
+            </span>
+            <div>
+              <h2 className="text-xl font-bold text-gray-950">
+                {hi ? "खाता गोपनीयता और हटाना" : "Account privacy and deletion"}
+              </h2>
+              <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-600">
+                {hi
+                  ? "अपनी गोपनीयता जानकारी पढ़ें या अपना Dhaga खाता और उससे जुड़ा डेटा स्थायी रूप से हटाएं।"
+                  : "Review your privacy information or permanently delete your Dhaga account and associated data."}
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-3">
+            <Link href="/privacy" className="inline-flex items-center gap-2 rounded-xl border border-stone-300 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-50">
+              <ShieldCheck size={17} /> {hi ? "गोपनीयता नीति" : "Privacy Policy"}
+            </Link>
+            <Link href="/account/delete" className="inline-flex items-center gap-2 rounded-xl bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-800">
+              <Trash2 size={17} /> {hi ? "खाता हटाएं" : "Delete Account"}
+            </Link>
+          </div>
+        </div>
+      </section>
 
     </div>
   </main>

@@ -8,10 +8,6 @@ export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
-    console.log("Session:", session);
-console.log("Session User:", session?.user);
-console.log("Session User ID:", session?.user?.id);
-
     if (!session?.user?.id) {
       return NextResponse.json(
         { message: "Unauthorized" },
@@ -29,10 +25,21 @@ console.log("Session User ID:", session?.user?.id);
         email: true,
         phone: true,
         address: true,
+        tailorProfile: { select: { id: true } },
       },
     });
 
-    return NextResponse.json(user);
+    if (!user) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      isTailor: Boolean(user.tailorProfile),
+    });
 
   } catch (error) {
     console.error(error);

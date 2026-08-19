@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Scissors, UserRound } from "lucide-react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
 import RegisterChoice from "./components/RegisterChoice";
@@ -17,6 +17,14 @@ export default function RegisterPage() {
     useState<AccountType | null>(null);
   const [registerType, setRegisterType] =
     useState<RegisterType>(null);
+
+  useEffect(() => {
+    const requestedType = new URLSearchParams(window.location.search).get("type");
+    if (requestedType === "customer" || requestedType === "tailor") {
+      const timer = window.setTimeout(() => setAccountType(requestedType), 0);
+      return () => window.clearTimeout(timer);
+    }
+  }, []);
 
   const returnToAccountType = () => {
     setRegisterType(null);

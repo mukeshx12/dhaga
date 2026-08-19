@@ -41,9 +41,9 @@ export default function MobileBottomNav() {
 
   const tailorItems = [
     { label: hi ? "होम" : "Home", href: "/", icon: Home },
-    { label: hi ? "अनुरोध" : "Requests", href: "/tailor-dashboard", icon: Clock3 },
+    { label: hi ? "अनुरोध" : "Requests", href: "/tailor-dashboard?section=requests", icon: Clock3 },
     { label: hi ? "कीमतें" : "Prices", href: "/tailor-dashboard/services", icon: Scissors },
-    { label: hi ? "दुकान" : "Shop", href: "/tailor-dashboard", icon: Store },
+    { label: hi ? "दुकान" : "Shop", href: "/tailor-dashboard?section=profile", icon: Store },
     { label: hi ? "अकाउंट" : "Account", href: "/profile", icon: UserRound },
   ];
 

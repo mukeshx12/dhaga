@@ -5,12 +5,20 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 
 
+const indianPhoneSchema = z.preprocess((value) => {
+  if (typeof value !== "string") return value;
+  const digits = value.replace(/\D/g, "");
+  if (digits.length === 10) return `+91${digits}`;
+  if (digits.length === 12 && digits.startsWith("91")) return `+${digits}`;
+  return value.trim();
+}, z.string().regex(/^\+91\d{10}$/, "Enter a valid Indian phone number."));
+
 const tailorSchema = z.object({
   shopName: z.string().min(2),
-  phone: z.string().min(10),
+  phone: indianPhoneSchema,
   city: z.string().min(2),
   address: z.string().min(5),
-  experience: z.coerce.number().min(0),
+  experience: z.coerce.number().int().min(0).max(80),
   description: z.string().optional(),
   shopPhoto: z.string().max(3_000_000).nullable().optional(),
   workPhotos: z.array(z.string().max(3_000_000)).max(5).optional(),

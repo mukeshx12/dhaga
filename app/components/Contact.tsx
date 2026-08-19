@@ -38,9 +38,9 @@ export default function Contact() {
               <T en="Email" hi="ईमेल" />
             </h3>
 
-            <p className="mt-2 text-gray-600">
-              support@dhaga.com
-            </p>
+            <a href="mailto:support@joindhaga.com" className="mt-2 inline-block text-gray-600 underline-offset-4 hover:text-amber-800 hover:underline">
+              support@joindhaga.com
+            </a>
           </div>
 
           <div className="rounded-2xl bg-white p-8 shadow">

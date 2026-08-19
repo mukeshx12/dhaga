@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
-import { ClipboardList, Home, LogOut, Scissors, Store } from "lucide-react";
+import { ClipboardList, Home, Scissors, Store } from "lucide-react";
 import TailorBookings from "./TailorBookings";
 import TailorListing from "./TailorListing";
 import TailorServices from "@/app/components/dashboard/TailorServices";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import LogoutButton from "@/app/components/LogoutButton";
 
 type Listing = {
   shopName: string;
@@ -23,6 +23,7 @@ type Listing = {
 
 type Props = {
   initialListing: Listing;
+  initialSection?: Section;
 };
 
 type Section = "requests" | "services" | "profile";
@@ -45,8 +46,8 @@ const sections = [
   },
 ];
 
-export default function TailorDashboardTabs({ initialListing }: Props) {
-  const [activeSection, setActiveSection] = useState<Section>("requests");
+export default function TailorDashboardTabs({ initialListing, initialSection = "requests" }: Props) {
+  const [activeSection, setActiveSection] = useState<Section>(initialSection);
   const { language } = useLanguage();
   const hi = language === "hi";
 
@@ -63,14 +64,7 @@ export default function TailorDashboardTabs({ initialListing }: Props) {
               {hi ? "होम" : "Home"}
             </Link>
 
-            <button
-              type="button"
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-3 text-sm font-semibold text-red-600 transition hover:bg-red-50"
-            >
-              <LogOut size={18} />
-              {hi ? "लॉग आउट" : "Logout"}
-            </button>
+            <LogoutButton />
           </div>
 
           <div className="grid w-full gap-2 rounded-2xl border border-gray-200 bg-white p-2 shadow-sm sm:w-auto sm:grid-cols-3">
@@ -82,7 +76,10 @@ export default function TailorDashboardTabs({ initialListing }: Props) {
               <button
                 key={section.id}
                 type="button"
-                onClick={() => setActiveSection(section.id)}
+                onClick={() => {
+                  setActiveSection(section.id);
+                  window.history.replaceState(null, "", `/tailor-dashboard?section=${section.id}`);
+                }}
                 aria-current={isActive ? "page" : undefined}
                 className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold transition ${
                   isActive

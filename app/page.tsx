@@ -14,6 +14,7 @@ import Stats from "./components/Stats";
 import Contact from "./components/Contact";
 import T from "./components/LocalizedText";
 import MobileAppHome from "./components/MobileAppHome";
+import LegalFooter from "./components/LegalFooter";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +94,8 @@ export default async function Home() {
       <div className="hidden md:block">
         <Contact />
       </div>
+
+      <LegalFooter />
     </main>
   );
 }
