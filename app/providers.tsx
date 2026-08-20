@@ -7,6 +7,7 @@ import { LanguageProvider } from "./i18n/LanguageProvider";
 import type { Language } from "./i18n/config";
 import MobileNativeBridge from "./components/MobileNativeBridge";
 import MobileBottomNav from "./components/MobileBottomNav";
+import AppFlashMessage from "./components/AppFlashMessage";
 
 type ProvidersProps = {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ export default function Providers({
     <LanguageProvider initialLanguage={initialLanguage}>
       <SessionProvider>
         {children}
+        <AppFlashMessage />
         <MobileNativeBridge />
         <MobileBottomNav />
       </SessionProvider>

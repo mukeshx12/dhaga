@@ -1,29 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
 import type { AccountType } from "../page";
+import { indianSubscriberDigits, normalizeIndianPhone } from "@/lib/phone/india";
 
 type Props = {
   accountType: AccountType;
   onBack: () => void;
 };
-
-function formatIndianPhone(phone: string) {
-  const cleaned = phone.replace(/\s+/g, "").trim();
-
-  if (cleaned.startsWith("+")) {
-    return cleaned;
-  }
-
-  if (cleaned.length === 10) {
-    return `+91${cleaned}`;
-  }
-
-  return cleaned;
-}
 
 export default function PhoneRegister({ accountType, onBack }: Props) {
   const router = useRouter();
@@ -37,20 +24,25 @@ export default function PhoneRegister({ accountType, onBack }: Props) {
   const [otpSent, setOtpSent] = useState(false);
   const [challenge, setChallenge] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const otpRequestInFlight = useRef(false);
 
   const sendOtp = async () => {
-    const formattedPhone = formatIndianPhone(phone);
+    if (otpRequestInFlight.current) return;
+    setError("");
+    const formattedPhone = normalizeIndianPhone(phone);
 
     if (!name.trim()) {
-      alert("Please enter your full name.");
+      setError("Please enter your full name.");
       return;
     }
 
-    if (!/^\+91\d{10}$/.test(formattedPhone)) {
-      alert("Enter a valid 10-digit Indian phone number.");
+    if (!formattedPhone) {
+      setError("Enter a valid 10-digit Indian phone number.");
       return;
     }
 
+    otpRequestInFlight.current = true;
     setLoading(true);
 
     try {
@@ -61,33 +53,34 @@ export default function PhoneRegister({ accountType, onBack }: Props) {
         },
         body: JSON.stringify({
           phone: formattedPhone,
+          purpose: "register",
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        alert(data.message || "Failed to send OTP.");
+        setError(data.message || "Failed to send OTP.");
         return;
       }
 
       setPhone(formattedPhone);
       setChallenge(data.challenge);
       setOtpSent(true);
-      alert("OTP sent successfully.");
     } catch (error) {
       console.error("Send OTP error:", error);
-      alert("Unable to send OTP.");
+      setError("Unable to send OTP.");
     } finally {
+      otpRequestInFlight.current = false;
       setLoading(false);
     }
   };
 
   const createAccount = async () => {
-    const formattedPhone = formatIndianPhone(phone);
+    const formattedPhone = normalizeIndianPhone(phone);
 
-    if (!otp.trim()) {
-      alert("Please enter the OTP.");
+    if (!formattedPhone || !otp.trim()) {
+      setError(!formattedPhone ? "Enter a valid phone number." : "Please enter the OTP.");
       return;
     }
 
@@ -104,7 +97,7 @@ export default function PhoneRegister({ accountType, onBack }: Props) {
       });
 
       if (!result?.ok) {
-        alert(result?.error || "Registration failed.");
+        setError(result?.error === "CredentialsSignin" ? "Invalid or expired OTP." : result?.error || "Registration failed.");
         return;
       }
 
@@ -112,7 +105,7 @@ export default function PhoneRegister({ accountType, onBack }: Props) {
       router.refresh();
     } catch (error) {
       console.error("Phone registration error:", error);
-      alert("Something went wrong.");
+      setError("Something went wrong.");
     } finally {
       setLoading(false);
     }
@@ -122,6 +115,7 @@ export default function PhoneRegister({ accountType, onBack }: Props) {
     setOtp("");
     setChallenge("");
     setOtpSent(false);
+    setError("");
   };
 
   return (
@@ -170,15 +164,21 @@ export default function PhoneRegister({ accountType, onBack }: Props) {
                 inputMode="numeric"
                 maxLength={10}
                 placeholder="9876543210"
-                value={phone.replace("+91", "")}
+                value={indianSubscriberDigits(phone)}
                 onChange={(event) =>
-                  setPhone(event.target.value.replace(/\D/g, ""))
+                  setPhone(event.target.value.replace(/\D/g, "").slice(0, 10))
                 }
                 disabled={otpSent}
                 className="w-full rounded-r-xl p-4 text-gray-900 placeholder:text-gray-400 outline-none disabled:bg-gray-100"
               />
             </div>
           </div>
+
+          {error && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700">
+              {error}
+            </div>
+          )}
 
           {!otpSent ? (
             <button

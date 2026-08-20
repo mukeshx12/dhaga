@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyOtp } from "@/lib/otp/verifyOtp";
+import { normalizeIndianPhone } from "@/lib/phone/india";
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, otp, challenge } = await req.json();
+    const { phone: suppliedPhone, otp, challenge } = await req.json();
+    const phone = normalizeIndianPhone(typeof suppliedPhone === "string" ? suppliedPhone : "");
 
     if (!phone || !otp || !challenge) {
       return NextResponse.json(

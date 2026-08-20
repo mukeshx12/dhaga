@@ -1,34 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import { indianSubscriberDigits, normalizeIndianPhone } from "@/lib/phone/india";
 
 type PhoneLoginProps = {
   onBack: () => void;
 };
-
-function formatIndianPhone(
-  phoneNumber: string
-) {
-  const cleaned = phoneNumber
-    .replace(/\D/g, "")
-    .trim();
-
-  if (
-    cleaned.length === 12 &&
-    cleaned.startsWith("91")
-  ) {
-    return `+${cleaned}`;
-  }
-
-  if (cleaned.length === 10) {
-    return `+91${cleaned}`;
-  }
-
-  return phoneNumber.trim();
-}
 
 export default function PhoneLogin({
   onBack,
@@ -58,20 +38,21 @@ export default function PhoneLogin({
   const [message, setMessage] =
     useState("");
 
+  const otpRequestInFlight = useRef(false);
+
   /*
    * Sends OTP through your existing API.
    */
   const sendOtp = async () => {
+    if (otpRequestInFlight.current) return;
     setError("");
     setMessage("");
 
     const formattedPhone =
-      formatIndianPhone(phone);
+      normalizeIndianPhone(phone);
 
     if (
-      !/^\+91\d{10}$/.test(
-        formattedPhone
-      )
+      !formattedPhone
     ) {
       setError(
         "Enter a valid 10-digit phone number."
@@ -80,6 +61,7 @@ export default function PhoneLogin({
       return;
     }
 
+    otpRequestInFlight.current = true;
     setLoading(true);
 
     try {
@@ -93,6 +75,7 @@ export default function PhoneLogin({
           },
           body: JSON.stringify({
             phone: formattedPhone,
+            purpose: "login",
           }),
         }
       );
@@ -114,10 +97,6 @@ export default function PhoneLogin({
       setPhone(formattedPhone);
       setChallenge(data.challenge);
       setOtpSent(true);
-
-      setMessage(
-        `OTP sent to ${formattedPhone}`
-      );
     } catch (error) {
       console.error(
         "Send login OTP error:",
@@ -128,6 +107,7 @@ export default function PhoneLogin({
         "Something went wrong while sending OTP."
       );
     } finally {
+      otpRequestInFlight.current = false;
       setLoading(false);
     }
   };
@@ -141,7 +121,12 @@ export default function PhoneLogin({
     setMessage("");
 
     const formattedPhone =
-      formatIndianPhone(phone);
+      normalizeIndianPhone(phone);
+
+    if (!formattedPhone) {
+      setError("Enter a valid 10-digit phone number.");
+      return;
+    }
 
     if (!otp.trim()) {
       setError("Please enter the OTP.");
@@ -162,6 +147,7 @@ export default function PhoneLogin({
           phone: formattedPhone,
           otp: otp.trim(),
           challenge,
+          callbackUrl,
 
           /*
            * Keep redirect false so we can
@@ -169,11 +155,6 @@ export default function PhoneLogin({
            */
           redirect: false,
         }
-      );
-
-      console.log(
-        "Phone login result:",
-        result
       );
 
       if (!result) {
@@ -189,7 +170,7 @@ export default function PhoneLogin({
         !result.ok
       ) {
         setError(
-          result.error ||
+          (result.error === "CredentialsSignin" ? "Invalid or expired OTP." : result.error) ||
             "OTP verification failed."
         );
 
@@ -267,10 +248,7 @@ export default function PhoneLogin({
                 inputMode="numeric"
                 maxLength={10}
                 placeholder="9876543210"
-                value={phone.replace(
-                  "+91",
-                  ""
-                )}
+                value={indianSubscriberDigits(phone)}
                 onChange={(event) => {
                   const value =
                     event.target.value.replace(
@@ -278,7 +256,7 @@ export default function PhoneLogin({
                       ""
                     );
 
-                  setPhone(value);
+                  setPhone(value.slice(0, 10));
                   setError("");
                 }}
                 disabled={

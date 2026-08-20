@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/authOptions";
 import { prisma } from "@/lib/prisma";
 import { verifyOtp } from "@/lib/otp/verifyOtp";
+import { normalizeIndianPhone } from "@/lib/phone/india";
 
 export async function GET() {
   try {
@@ -70,8 +71,24 @@ export async function PATCH(req: NextRequest) {
     });
     if (!currentUser) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-    const requestedPhone = typeof body.phone === "string" ? body.phone.replace(/\s+/g, "").trim() : null;
-    if (requestedPhone && requestedPhone !== currentUser.phone) {
+    const suppliedPhone = typeof body.phone === "string" ? body.phone.trim() : "";
+    const requestedPhone = suppliedPhone ? normalizeIndianPhone(suppliedPhone) : null;
+    const currentPhone = currentUser.phone ? normalizeIndianPhone(currentUser.phone) : null;
+
+    if (suppliedPhone && !requestedPhone) {
+      return NextResponse.json({ message: "Enter a valid Indian phone number." }, { status: 400 });
+    }
+
+    if (!requestedPhone && currentPhone) {
+      return NextResponse.json({ message: "A verified phone number cannot be removed from your profile." }, { status: 400 });
+    }
+
+    if (requestedPhone && requestedPhone !== currentPhone) {
+      const phoneOwner = await prisma.user.findUnique({ where: { phone: requestedPhone }, select: { id: true } });
+      if (phoneOwner && phoneOwner.id !== session.user.id) {
+        return NextResponse.json({ message: "This phone number is already linked to another account." }, { status: 409 });
+      }
+
       if (!/^\+91\d{10}$/.test(requestedPhone)) {
         return NextResponse.json({ message: "Enter a valid Indian phone number." }, { status: 400 });
       }
@@ -86,7 +103,7 @@ export async function PATCH(req: NextRequest) {
       },
       data: {
         name: body.name,
-        phone: requestedPhone,
+        phone: requestedPhone ?? currentPhone,
         address: body.address,
       },
     });

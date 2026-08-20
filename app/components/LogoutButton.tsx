@@ -5,6 +5,7 @@ import { signOut } from "next-auth/react";
 import { useState } from "react";
 
 import { useLanguage } from "@/app/i18n/LanguageProvider";
+import { appFlashStorageKey } from "@/app/components/AppFlashMessage";
 
 type LogoutButtonProps = {
   className?: string;
@@ -20,6 +21,7 @@ export default function LogoutButton({ className = "" }: LogoutButtonProps) {
 
     try {
       const result = await signOut({ redirect: false, callbackUrl: "/" });
+      window.sessionStorage.setItem(appFlashStorageKey, "logout");
       window.location.assign(result?.url || "/");
     } catch {
       setLoggingOut(false);

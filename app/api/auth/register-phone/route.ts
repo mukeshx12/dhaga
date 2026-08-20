@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyOtp } from "@/lib/otp/verifyOtp";
+import { normalizeIndianPhone } from "@/lib/phone/india";
 
 export async function POST(req: NextRequest) {
   try {
@@ -11,10 +12,11 @@ export async function POST(req: NextRequest) {
         ? body.name.trim()
         : "";
 
-    const phone =
+    const suppliedPhone =
       typeof body.phone === "string"
-        ? body.phone.replace(/\s+/g, "").trim()
+        ? body.phone
         : "";
+    const phone = normalizeIndianPhone(suppliedPhone);
 
     const otp =
       typeof body.otp === "string"
@@ -31,16 +33,6 @@ export async function POST(req: NextRequest) {
         {
           success: false,
           message: "Name, phone, OTP and verification challenge are required.",
-        },
-        { status: 400 }
-      );
-    }
-
-    if (!/^\+91\d{10}$/.test(phone)) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Enter a valid Indian phone number.",
         },
         { status: 400 }
       );

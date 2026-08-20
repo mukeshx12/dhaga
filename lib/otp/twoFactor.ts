@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { normalizeIndianPhone } from "@/lib/phone/india";
 
 const TWO_FACTOR_API_BASE = "https://2factor.in/API/V1";
 const CHALLENGE_TTL_MS = 10 * 60 * 1000;
@@ -37,11 +38,12 @@ function getChallengeSecret() {
 }
 
 function indianSubscriberNumber(phone: string) {
-  if (!/^\+91\d{10}$/.test(phone)) {
+  const normalizedPhone = normalizeIndianPhone(phone);
+  if (!normalizedPhone) {
     throw new Error("Enter a valid Indian phone number.");
   }
 
-  return phone.slice(3);
+  return normalizedPhone.slice(3);
 }
 
 async function callTwoFactor(path: string): Promise<TwoFactorResponse> {

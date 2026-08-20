@@ -5,6 +5,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { verifyOtp } from "@/lib/otp/verifyOtp";
+import { normalizeIndianPhone } from "@/lib/phone/india";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -31,13 +32,12 @@ export const authOptions: NextAuthOptions = {
         name: { label: "Name", type: "text" },
       },
       async authorize(credentials) {
-        const phone = credentials?.phone?.replace(/\s+/g, "").trim();
+        const phone = normalizeIndianPhone(credentials?.phone ?? "");
         const otp = credentials?.otp?.trim();
         const challenge = credentials?.challenge?.trim();
         const registering = credentials?.action?.trim() === "register";
         const registrationName = credentials?.name?.trim();
         if (!phone || !otp || !challenge) throw new Error("Phone number, OTP and verification challenge are required.");
-        if (!/^\+91\d{10}$/.test(phone)) throw new Error("Enter a valid Indian phone number.");
         if (registering && (!registrationName || registrationName.length < 2)) throw new Error("Please enter your full name.");
         const user = await prisma.user.findUnique({ where: { phone } });
         if (registering && user) throw new Error("An account already exists with this phone number. Please login.");
