@@ -6,10 +6,12 @@ import { useLanguage } from "@/app/i18n/LanguageProvider";
 
 type Props = {
   tailorId: string;
+  className?: string;
 };
 
 export default function BookMeasurementButton({
   tailorId,
+  className = "",
 }: Props) {
   const { data: session } = useSession();
   const router = useRouter();
@@ -29,7 +31,7 @@ export default function BookMeasurementButton({
   return (
     <button
       onClick={handleClick}
-      className="rounded-xl bg-amber-700 px-6 py-3 font-semibold text-white hover:bg-amber-800"
+      className={`inline-flex min-h-12 items-center justify-center rounded-xl bg-amber-700 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-amber-800 ${className}`}
     >
       {language === "hi" ? "माप बुक करें" : "Book Measurement"}
     </button>

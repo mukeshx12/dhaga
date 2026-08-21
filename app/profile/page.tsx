@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Trash2 } from "lucide-react";
+import { MapPin, Phone, ShieldCheck, Trash2, UserRound } from "lucide-react";
 import { useLanguage } from "@/app/i18n/LanguageProvider";
 import LogoutButton from "@/app/components/LogoutButton";
 import { indianSubscriberDigits, normalizeIndianPhone } from "@/lib/phone/india";
@@ -176,85 +176,87 @@ export default function ProfilePage() {
   }
 
   return (
-  <main className="min-h-screen bg-gray-50 py-12">
-    <div className="mx-auto max-w-5xl px-6">
+  <main className="min-h-screen overflow-x-hidden bg-[#FAF7F2] pb-28 pt-7 text-slate-950 sm:py-12 md:pb-14">
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
 
-      <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-4xl font-bold text-gray-900">
+      <div className="mb-6 flex items-start justify-between gap-3 sm:mb-9">
+        <div className="min-w-0">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-amber-700">
+            {hi ? "आपका खाता" : "Your account"}
+          </p>
+          <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-slate-950 sm:text-4xl">
             {hi ? "मेरी प्रोफ़ाइल" : "My Profile"}
           </h1>
 
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
             {hi ? "अपनी व्यक्तिगत जानकारी संभालें और खाता अपडेट रखें।" : "Manage your personal information and keep your account up to date."}
           </p>
         </div>
-        <LogoutButton className="w-full sm:w-auto" />
+        <LogoutButton className="shrink-0 px-3 sm:px-4" />
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,2.1fr)] lg:gap-7">
 
         {/* Left Card */}
-        <div className="rounded-3xl bg-white p-8 shadow">
+        <aside className="min-w-0 rounded-[1.75rem] border border-amber-100 bg-white p-5 shadow-[0_18px_45px_rgba(120,53,15,0.08)] sm:p-7">
 
-          <div className="flex flex-col items-center">
+          <div className="flex min-w-0 flex-col items-center text-center">
 
-            <div className="grid h-28 w-28 place-items-center rounded-full bg-amber-700 text-4xl font-bold leading-none text-white">
+            <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-gradient-to-br from-amber-600 to-orange-700 text-3xl font-extrabold leading-none text-white shadow-[0_10px_28px_rgba(180,83,9,0.24)] sm:h-24 sm:w-24 sm:text-4xl">
               {profile.name
                 ? profile.name.charAt(0).toUpperCase()
                 : "U"}
             </div>
 
-            <h2 className="mt-5 text-2xl font-semibold text-gray-900">
-              {profile.name || "Customer"}
-            </h2>
-
-            <p className="text-gray-500">
-              {profile.email}
-            </p>
-
-            <span className="mt-5 rounded-full bg-green-100 px-4 py-2 text-sm font-semibold text-green-700">
-              {profile.isTailor ? (hi ? "दर्जी" : "Tailor") : (hi ? "ग्राहक" : "Customer")}
-            </span>
-
-          </div>
-
-          <div className="mt-8 space-y-5 border-t pt-6">
-
-            <div>
-              <p className="text-sm text-gray-500">
-                {hi ? "फोन" : "Phone"}
+            <div className="mt-4 min-w-0 w-full">
+              <h2 className="break-words text-xl font-bold text-slate-950 sm:text-2xl">
+                {profile.name || "Customer"}
+              </h2>
+              <p className="mt-1 break-all text-sm text-slate-500">
+                {profile.email}
               </p>
-
-              <p className="font-medium text-gray-900">
-                {profile.phone || (hi ? "नहीं जोड़ा गया" : "Not Added")}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm text-gray-500">
-                {hi ? "पता" : "Address"}
-              </p>
-
-              <p className="font-medium text-gray-900">
-                {profile.address || (hi ? "नहीं जोड़ा गया" : "Not Added")}
-              </p>
+              <span className="mt-3 inline-flex rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-700 ring-1 ring-inset ring-emerald-200">
+                {profile.isTailor ? (hi ? "दर्जी" : "Tailor") : (hi ? "ग्राहक" : "Customer")}
+              </span>
             </div>
 
           </div>
 
-        </div>
+          <div className="mt-6 grid gap-3 border-t border-slate-100 pt-5 sm:grid-cols-2 lg:grid-cols-1">
+
+            <div className="flex min-w-0 items-start gap-3 rounded-2xl bg-slate-50 p-3.5">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-amber-700 shadow-sm"><Phone size={17} /></span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-slate-500">{hi ? "फोन" : "Phone"}</p>
+                <p className="mt-0.5 break-words text-sm font-semibold text-slate-900">{profile.phone || (hi ? "नहीं जोड़ा गया" : "Not Added")}</p>
+              </div>
+            </div>
+
+            <div className="flex min-w-0 items-start gap-3 rounded-2xl bg-slate-50 p-3.5">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white text-amber-700 shadow-sm"><MapPin size={17} /></span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-slate-500">{hi ? "पता" : "Address"}</p>
+                <p className="mt-0.5 break-words text-sm font-semibold leading-5 text-slate-900">{profile.address || (hi ? "नहीं जोड़ा गया" : "Not Added")}</p>
+              </div>
+            </div>
+
+          </div>
+
+        </aside>
 
         {/* Right Form */}
-        <div className="lg:col-span-2 rounded-3xl bg-white p-10 shadow">
+        <section className="min-w-0 rounded-[1.75rem] border border-stone-200/80 bg-white p-5 shadow-[0_18px_45px_rgba(15,23,42,0.06)] sm:p-8">
 
-          <h2 className="text-2xl font-bold text-gray-900">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-2xl bg-amber-50 text-amber-700"><UserRound size={20} /></span>
+            <h2 className="text-xl font-bold text-slate-950 sm:text-2xl">
             {hi ? "प्रोफ़ाइल संपादित करें" : "Edit Profile"}
-          </h2>
+            </h2>
+          </div>
 
           <form
             onSubmit={handleSubmit}
-            className="mt-8 space-y-6"
+            className="mt-6 space-y-5"
           >
 
             <div>
@@ -271,7 +273,7 @@ export default function ProfilePage() {
                     name: e.target.value,
                   })
                 }
-                className="w-full rounded-xl border border-gray-300 bg-white p-4 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
+                className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-base outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
               />
             </div>
 
@@ -284,7 +286,7 @@ export default function ProfilePage() {
                 type="email"
                 value={profile.email}
                 disabled
-                className="w-full rounded-xl border border-gray-300 bg-gray-100 p-4 text-gray-500"
+                className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3.5 text-base text-slate-500"
               />
             </div>
 
@@ -293,8 +295,8 @@ export default function ProfilePage() {
                 {hi ? "फोन नंबर" : "Phone Number"}
               </label>
 
-              <div className="flex rounded-xl border border-gray-300 bg-white focus-within:border-amber-700 focus-within:ring-2 focus-within:ring-amber-200">
-                <span className="flex items-center border-r border-gray-300 px-4 font-semibold text-gray-700">+91</span>
+              <div className="flex min-w-0 rounded-xl border border-slate-300 bg-white focus-within:border-amber-700 focus-within:ring-2 focus-within:ring-amber-200">
+                <span className="flex shrink-0 items-center border-r border-slate-300 px-3 font-semibold text-slate-700 sm:px-4">+91</span>
                 <input
                   type="tel"
                   inputMode="numeric"
@@ -309,7 +311,7 @@ export default function ProfilePage() {
                     setPhoneError("");
                   }}
                   placeholder="9876543210"
-                  className="min-w-0 flex-1 rounded-r-xl bg-white p-4 outline-none"
+                  className="min-w-0 flex-1 rounded-r-xl bg-white px-3 py-3.5 text-base outline-none sm:px-4"
                 />
               </div>
 
@@ -379,16 +381,16 @@ export default function ProfilePage() {
                   })
                 }
                 placeholder={hi ? "अपना पता दर्ज करें" : "Enter your address"}
-                className="w-full rounded-xl border border-gray-300 bg-white p-4 outline-none focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
+                className="w-full resize-y rounded-xl border border-slate-300 bg-white px-4 py-3.5 text-base outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
               />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-stretch pt-1 sm:justify-end">
 
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-amber-700 px-8 py-4 font-semibold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50"
+                className="w-full rounded-xl bg-amber-700 px-6 py-3.5 font-bold text-white shadow-sm transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
                 {saving ? (hi ? "सहेज रहे हैं..." : "Saving...") : (hi ? "बदलाव सहेजें" : "Save Changes")}
               </button>
@@ -397,18 +399,18 @@ export default function ProfilePage() {
 
           </form>
 
-        </div>
+        </section>
 
       </div>
 
-      <section className="mt-8 rounded-3xl border border-red-200 bg-white p-7 shadow-sm sm:p-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <section className="mt-5 rounded-[1.75rem] border border-red-200 bg-white p-5 shadow-sm sm:mt-7 sm:p-7">
+        <div className="flex min-w-0 flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-start gap-4">
             <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-red-50 text-red-700">
               <Trash2 size={21} aria-hidden="true" />
             </span>
             <div>
-              <h2 className="text-xl font-bold text-gray-950">
+              <h2 className="text-lg font-bold leading-6 text-gray-950 sm:text-xl">
                 {hi ? "खाता गोपनीयता और हटाना" : "Account privacy and deletion"}
               </h2>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-600">
@@ -418,11 +420,11 @@ export default function ProfilePage() {
               </p>
             </div>
           </div>
-          <div className="flex shrink-0 flex-wrap gap-3">
-            <Link href="/privacy" className="inline-flex items-center gap-2 rounded-xl border border-stone-300 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-50">
+          <div className="grid shrink-0 gap-3 sm:grid-cols-2 md:flex">
+            <Link href="/privacy" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-stone-300 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:bg-stone-50">
               <ShieldCheck size={17} /> {hi ? "गोपनीयता नीति" : "Privacy Policy"}
             </Link>
-            <Link href="/account/delete" className="inline-flex items-center gap-2 rounded-xl bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-800">
+            <Link href="/account/delete" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-red-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-800">
               <Trash2 size={17} /> {hi ? "खाता हटाएं" : "Delete Account"}
             </Link>
           </div>

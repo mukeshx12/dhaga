@@ -61,7 +61,7 @@ export default function TailorServices() {
   }
 
   return (
-    <div className="mt-12 rounded-2xl bg-white p-8 shadow">
+    <section className="mt-8 min-w-0 overflow-hidden rounded-[1.75rem] border border-stone-200/80 bg-white p-4 shadow-[0_18px_45px_rgba(15,23,42,0.06)] sm:mt-10 sm:p-6 lg:p-8">
 
       <h2 className="text-2xl font-bold">
         My Services
@@ -69,14 +69,14 @@ export default function TailorServices() {
 
       <form
         onSubmit={addService}
-        className="mt-6 flex gap-3"
+        className="mt-5 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.42fr)_auto] sm:items-stretch"
       >
         <input
           type="text"
           placeholder="Service Name"
           value={serviceName}
           onChange={(e) => setServiceName(e.target.value)}
-          className="flex-1 rounded-xl border p-3"
+          className="min-h-12 min-w-0 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition placeholder:text-slate-400 focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
         />
 
         <input
@@ -84,12 +84,12 @@ export default function TailorServices() {
           placeholder="Price"
           value={price}
           onChange={(e) => setPrice(e.target.value)}
-          className="w-40 rounded-xl border p-3"
+          className="min-h-12 min-w-0 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition placeholder:text-slate-400 focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
         />
 
         <button
           type="submit"
-          className="rounded-xl bg-amber-700 px-6 text-white"
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-amber-700 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-amber-800 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 sm:w-auto"
         >
           Add
         </button>
@@ -106,19 +106,19 @@ export default function TailorServices() {
           {services.map((service) => (
             <div
               key={service.id}
-              className="flex items-center justify-between rounded-xl border p-4"
+              className="flex min-w-0 items-center justify-between gap-4 rounded-xl border border-stone-200 p-4"
             >
-              <span className="font-medium">
+              <span className="min-w-0 break-words font-medium">
                 {service.serviceName}
               </span>
 
-              <span className="font-semibold text-amber-700">
+              <span className="shrink-0 font-semibold text-amber-700">
                 ₹{service.price}
               </span>
             </div>
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }

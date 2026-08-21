@@ -7,9 +7,10 @@ import { useLanguage } from "@/app/i18n/LanguageProvider";
 type Props = {
   tailorId: string;
   initiallySaved: boolean;
+  className?: string;
 };
 
-export default function SaveTailorButton({ tailorId, initiallySaved }: Props) {
+export default function SaveTailorButton({ tailorId, initiallySaved, className = "" }: Props) {
   const { language } = useLanguage();
   const [saved, setSaved] = useState(initiallySaved);
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ export default function SaveTailorButton({ tailorId, initiallySaved }: Props) {
       type="button"
       onClick={toggleSaved}
       disabled={loading}
-      className="mt-10 inline-flex items-center gap-2 rounded-xl border border-amber-700 px-6 py-4 font-semibold text-amber-800 hover:bg-amber-50 disabled:opacity-50"
+      className={`inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-amber-700 bg-white px-5 py-3 font-bold text-amber-800 transition hover:bg-amber-50 disabled:opacity-50 ${className}`}
     >
       <Heart size={20} className={saved ? "fill-current" : ""} />
       {saved ? (language === "hi" ? "सहेजा गया दर्जी" : "Saved tailor") : (language === "hi" ? "दर्जी सहेजें" : "Save tailor")}

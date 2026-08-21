@@ -77,7 +77,7 @@ export default function TailorServices() {
   }
 
   return (
-    <div className="mt-10 rounded-2xl bg-white p-6 shadow">
+    <section className="mt-8 min-w-0 overflow-hidden rounded-[1.75rem] border border-stone-200/80 bg-white p-4 shadow-[0_18px_45px_rgba(15,23,42,0.06)] sm:mt-10 sm:p-6">
       <h2 className="text-2xl font-extrabold text-black-950">{hi ? "मेरी सेवाएं" : "My Services"}</h2>
 
       <p className="mt-2 text-gray-500">
@@ -96,13 +96,13 @@ export default function TailorServices() {
         </div>
       )}
 
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div className="mt-6 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(7.5rem,0.42fr)_auto] sm:items-stretch">
         <input
           type="text"
           value={serviceName}
           onChange={(e) => setServiceName(e.target.value)}
           placeholder={hi ? "सेवा का नाम" : "Service Name"}
-          className="rounded-xl border border-gray-900 p-3 outline-none focus:border-amber-700"
+          className="min-h-12 min-w-0 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
         />
 
         <input
@@ -110,13 +110,13 @@ export default function TailorServices() {
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           placeholder={hi ? "कीमत" : "Price"}
-          className="rounded-xl border border-gray-900 p-3 outline-none focus:border-amber-700 placeholder:text-gray-400 "
+          className="min-h-12 min-w-0 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition placeholder:text-gray-400 focus:border-amber-700 focus:ring-2 focus:ring-amber-200"
         />
 
         <button
           onClick={addService}
           disabled={loading}
-          className="rounded-xl bg-amber-700 px-6 py-3 font-semibold text-white hover:bg-amber-800 disabled:opacity-50 placeholder:text-gray-400 "
+          className="inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-amber-700 px-6 py-3 font-bold text-white shadow-sm transition hover:bg-amber-800 disabled:opacity-50 sm:w-auto"
         >
           {loading ? (hi ? "जोड़ रहे हैं..." : "Adding...") : (hi ? "सेवा जोड़ें" : "Add Service")}
         </button>
@@ -129,10 +129,10 @@ export default function TailorServices() {
           services.map((service) => (
             <div
               key={service.id}
-              className="flex items-center justify-between rounded-xl border p-4"
+              className="flex min-w-0 items-center justify-between gap-4 rounded-xl border p-4"
             >
-              <div>
-                <h3 className="font-semibold">{service.serviceName}</h3>
+              <div className="min-w-0">
+                <h3 className="break-words font-semibold">{service.serviceName}</h3>
 
                 <p className="text-gray-500">
                   ₹ {service.price}
@@ -142,6 +142,6 @@ export default function TailorServices() {
           ))
         )}
       </div>
-    </div>
+    </section>
   );
 }
